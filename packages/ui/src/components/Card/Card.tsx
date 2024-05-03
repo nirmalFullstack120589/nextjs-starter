@@ -21,7 +21,6 @@ import getFirstOfArray from '../../utils/getFirstOfArray';
 import useThemeProps from '../../utils/useThemeProps';
 
 export const Card = (inProps: CardProps) => {
-  console.log({inProps});
   
   const props: CardProps = useThemeProps({
     name: 'Card',

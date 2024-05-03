@@ -12,10 +12,6 @@ import { join } from "path";
 
 const preview = parseBooleanEnvVar(process.env.CONTENTFUL_USE_PREVIEW);
 const site = process.env.SITE;
-console.log({preview, site});
-
-// const pagesRevalidate = parseInt(process.env.PAGES_REVALIDATE as string, 10);
-// const revalidate = !isNaN(pagesRevalidate) ? pagesRevalidate : false;
 
 export default function Page() {
   const pathName = usePathname();
@@ -24,16 +20,12 @@ export default function Page() {
   const [ _, setError] = useState<any>(null);
 
   useEffect(() => {
-    console.log("effect call");
     fetchData();
-  }, [pathName]); // Ensure re-fetching when slug changes
+  }, [pathName]); 
 
   const fetchData = async () => {
     
     try {
-      console.log('faetchData...');
-      // const path = join("/", ((pathName as string[]) || ["/"]).join("/"));
-     
       const { data: fetchedData } = await client.Page({
         path:pathName,
         locale: "en-US",
@@ -43,11 +35,9 @@ export default function Page() {
       if (!fetchedData?.page) {
         throw new Error("Page not found");
       }
-      console.log({fetchedData});
       
       setData(fetchedData);
     } catch (err) {
-      console.log('errr', err);
       
       if (err instanceof Error) {
         setError(err);
