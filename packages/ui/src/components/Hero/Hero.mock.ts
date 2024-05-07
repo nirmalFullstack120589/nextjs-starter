@@ -1,85 +1,77 @@
-import { lorem } from 'faker';
-import { capitalize } from 'lodash';
-import { HeroProps } from './Hero';
-import mockLink from '../Link/Link.mock';
-import mockTheme from '../../theme';
+import { linkButtonMock } from '../Link/Link.mock';
+import { mediaBaseImageMock } from '../Media/Media.mock';
+import { richTextMock } from '../RichText/RichText.mock';
 
-export default (): HeroProps => ({
-  id: 'hero',
+import { randomId } from '../utils/randomId';
+
+import { type HeroProps, HeroVariants } from './Hero.types';
+
+const heroDefaultMock: HeroProps = {
+  id: randomId(),
   __typename: 'Hero',
-  variant: 'default',
-  overline: capitalize(lorem.words(3)),
-  title: capitalize(lorem.words(3)),
-  subtitle: 'Salutantibus vitae elit libero, a pharetra augue. Contra legem facit qui id facit quod lex prohibet.',
-  image: {
-    file: {
-      url: 'https://images.ctfassets.net/m1b67l45sk9z/4Oj0gAEf0wFiPfg0R3QHqG/b1f835f3e380670cd6484e486c9816b1/it-gets-better.png?h=800'
-    },
-    title: 'Morbi fringilla convallis sapien, id pulvinar odio volutpat.'
-  },
-  body: {
-    // __typename: 'Text',
-    json: {
-      nodeType: 'document',
-      data: {},
-      content: [
-        {
-          nodeType: 'ordered-list',
-          data: {},
-          content: [
-            {
-              data: {},
-              content: [
-                {
-                  data: {},
-                  content: [
-                    {
-                      data: {},
-                      marks: [],
-                      value: 'Item One',
-                      nodeType: 'text'
-                    }
-                  ],
-                  nodeType: 'paragraph'
-                }
-              ],
-              nodeType: 'list-item'
-            },
-            {
-              data: {},
-              content: [
-                {
-                  data: {},
-                  content: [
-                    {
-                      data: {},
-                      marks: [],
-                      value: 'Item One',
-                      nodeType: 'text'
-                    }
-                  ],
-                  nodeType: 'paragraph'
-                }
-              ],
-              nodeType: 'list-item'
-            }
-          ]
-        }
-      ]
-    },
-    links: {
-      entries: [],
-      assets: []
-    }
-  },
-  actions: [{ ...mockLink(), text: 'Hero CTA' }],
-  background: {
-    file: {
-      url: 'https://i.picsum.photos/id/327/2800/800.jpg?hmac=lqhEpkLvfvBfoZSxszEf8pOTbitkmHpJmZsoQYcrWkI'
-    },
-    title: lorem.sentence()
-  },
-  backgroundColor: 'white',
-  contentHeight: 'sm',
-  contentWidth: 'xl'
+  variant: HeroVariants.default,
+  overline: 'This is the Hero overline',
+  title: 'This is the Hero title',
+  subtitle: 'This is the Hero subtitle',
+  body: richTextMock({ text: 'This is the Hero body' }),
+  images: [mediaBaseImageMock({ title: 'This is the Hero Media 1', width: 900, height: 900 })],
+  actions: [
+    linkButtonMock({
+      text: 'This is the Hero Action 1',
+      variant: 'buttonContained',
+      color: 'primary'
+    })
+    // linkButtonMock({ text: 'This is the Hero Action 2', variant: 'buttonOutlined' })
+  ],
+  // background: mediaBaseImageMock(),
+  backgroundColor: 'primary.lighter'
+};
+
+export const heroBaseMock = ({ ...override } = {}) => ({
+  ...heroDefaultMock,
+  ...override
 });
+
+export const heroMediaOnRightMock = ({ ...override } = {}) => ({
+  ...heroDefaultMock,
+  title: 'This is the "Hero Media on Right" title',
+  ...override,
+  variant: HeroVariants.mediaOnRight
+});
+
+export const heroMediaOnRightFullBleedMock = ({ ...override } = {}) => ({
+  ...heroDefaultMock,
+  title: 'This is the "Hero Media on Right Full Bleed" title',
+  ...override,
+  variant: HeroVariants.mediaOnRightFullBleed
+});
+
+export const heroMediaOnLeftMock = ({ ...override } = {}) => ({
+  ...heroDefaultMock,
+  title: 'This is the "Hero Media on Left" title',
+  ...override,
+  variant: HeroVariants.mediaOnLeft
+});
+
+export const heroMediaOnLeftFullBleedMock = ({ ...override } = {}) => ({
+  ...heroDefaultMock,
+  title: 'This is the "Hero Media on Left Full Bleed" title',
+  ...override,
+  variant: HeroVariants.mediaOnLeftFullBleed
+});
+
+export const heroMediaBelowMock = ({ ...override } = {}) => ({
+  ...heroDefaultMock,
+  title: 'This is the "Hero Media Below" title',
+  ...override,
+  variant: HeroVariants.mediaBelow
+});
+
+export const heroMediaAboveMock = ({ ...override } = {}) => ({
+  ...heroDefaultMock,
+  title: 'This is the "Hero Media Above" title',
+  ...override,
+  variant: HeroVariants.mediaAbove
+});
+
+export default heroBaseMock;

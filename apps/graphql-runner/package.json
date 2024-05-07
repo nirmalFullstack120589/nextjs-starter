@@ -11,7 +11,7 @@
     "start": "if [ \"$NODE_ENV\" != \"test\" ]; then run-s gql:pm2:kill gql:pm2 gql:healthcheck; fi",
     "sync:cms": "last-rev cms-sync -c ../../config.js",
     "gql:pm2": "pm2 start pm2.json",
-    "gql:healthcheck": "wait-on -c wait-on-config.js -t 6000",
+    "gql:healthcheck": "wait-on -c wait-on-config.js -t 10000",
     "gql:pm2:kill": "pm2 kill",
     "logs": "pm2 logs"
   },

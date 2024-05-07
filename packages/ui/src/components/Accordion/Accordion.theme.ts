@@ -1,46 +1,54 @@
-import { Theme, ThemeOptions, ComponentsOverrides, ComponentsVariants } from '@mui/material/styles';
+import type {
+  ThemeOptions,
+  ComponentsProps,
+  ComponentsOverrides,
+  ComponentsVariants
+} from '@mui/material/styles';
+import { Theme } from '@ui/ThemeRegistry/theme.types';
 
-// https://mui.com/customization/theme-components/#default-props
-export const defaultProps = {};
+import { AccordionVariants } from './Accordion.types';
 
-// https://mui.com/customization/theme-components/#global-style-overrides
-export const styleOverrides: ComponentsOverrides<Theme>['Accordion'] = {
-  // Set some static styles
-  // root: {
-  //   backgroundColor: 'red'
-  // }
-  //
-  // Use the ownerState to set dynamic styles
-  // root: ({ ownerState, theme }) => {
-  //   return {
-  //     backgroundColor: ownerState.variant === 'example' ? 'red' : theme.palette.background.paper
-  //   };
-  // }
+const defaultProps: ComponentsProps['Accordion'] = {};
+
+const styleOverrides: ComponentsOverrides<Theme>['Accordion'] = {
+  root: ({ theme, ownerState }) => ({
+    ...theme.mixins.applyBackgroundColor({ ownerState, theme }),
+    containerType: 'inline-size',
+    position: 'relative',
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column'
+  }),
+
+  // introTextGrid: : {},
+
+  introText: { gridColumn: 'content-start / content-end' },
+
+  contentOuterGrid: {
+    '> *': {
+      gridColumnStart: 'content-start',
+      gridColumnEnd: 'content-end'
+    },
+    'gridGap': 0
+    // 'display': 'contents'
+  }
+  // accordionItem: {},
+  // summaryWrap: {},
+  // summary: {},
+  // detailsWrap: {},
+  // details: {},
 };
 
-// https://mui.com/customization/theme-components/#adding-new-component-variants
 const createVariants = (_theme: Theme): ComponentsVariants['Accordion'] => [
-  // Use prop matching to set variant styles
-  // {
-  //   props: {
-  //     variant: 'example'
-  //   },
-  //   style: {
-  //     backgroundColor: theme.palette.primary.main
-  //   }
-  // }
-  // Other props are also valid
-  // {
-  //   props: {
-  //     backgroundColor: 'primary.main',
-  //   },
-  //   style: {
-  //     color: theme.palette.primary.contrastText
-  //   }
-  // }
+  {
+    props: {
+      variant: AccordionVariants.default
+    },
+    style: {}
+  }
 ];
 
-export default (theme: Theme): ThemeOptions => ({
+export const AccordionTheme = (theme: Theme): ThemeOptions => ({
   components: {
     Accordion: {
       defaultProps,
@@ -49,3 +57,5 @@ export default (theme: Theme): ThemeOptions => ({
     }
   }
 });
+
+export default AccordionTheme;

@@ -1,2 +1,2 @@
+export type { QuoteProps, QuoteClassKey } from './Quote.types';
 export { default } from './Quote';
-export type { QuoteProps, QuoteClasses, QuoteClassKey } from './Quote.types';

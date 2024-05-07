@@ -1,50 +1,108 @@
-import { Theme, ThemeOptions, ComponentsProps, ComponentsOverrides, ComponentsVariants } from '@mui/material/styles';
+import type {
+  ThemeOptions,
+  ComponentsProps,
+  ComponentsOverrides,
+  ComponentsVariants
+} from '@mui/material/styles';
+import { Theme } from '@ui/ThemeRegistry/theme.types';
 
-// https://mui.com/customization/theme-components/#default-props
-export const defaultProps: ComponentsProps['Text'] = {};
+const defaultProps: ComponentsProps['Text'] = {
+  variant: TextVariants.default
+};
 
-// https://mui.com/customization/theme-components/#global-style-overrides
-export const styleOverrides: ComponentsOverrides<Theme>['Text'] = {
+import { TextVariants } from './Text.types';
+
+const styleOverrides: ComponentsOverrides<Theme>['Text'] = {
   // Set some static styles
-  rootWrapper: ({ theme }) => ({
-    'whiteSpace': 'pre-wrap',
-
+  root: {
+    'width': '100%',
+    'display': 'unset',
     'ol, ul, li': {
       /* Revert padding reset is what gives the indentation to list */
+
       padding: 'revert'
     },
 
-    'blockquote': {
-      'borderLeft': `${theme.spacing(0.25)} solid ${theme.palette.primary.main}`,
-      'margin': theme.spacing(4, 2),
-      'paddingLeft': theme.spacing(2),
+    'main > &': {
+      'display': 'grid',
 
-      [theme.breakpoints.up('md')]: {
-        paddingLeft: theme.spacing(4)
-      },
-
-      '*': {
-        ...theme.typography.body1
+      '& > *': {
+        display: 'unset',
+        gridColumn: 'content-start/content-end'
       }
     }
+  },
+
+  title: ({ theme, ownerState }) => ({
+    ...(ownerState?.variant === TextVariants.default && {
+      ...theme.typography.h2
+    }),
+
+    ...(ownerState?.variant === TextVariants.introText && {
+      ...theme.typography.h1
+    })
   }),
 
-  embeddedAsset: () => ({
-    // Wraps asset and caption to remove small amount of vertical whitespace
-    display: 'flex',
-    flexDirection: 'column'
-  }),
+  subtitle: ({ theme, ownerState }) => ({
+    ...(ownerState?.variant === TextVariants.default && {
+      ...theme.typography.h3
+    }),
 
-  imageCaption: ({ theme }) => ({
-    margin: theme.spacing(4, 0),
-    display: 'inline-block'
+    ...(ownerState?.variant === TextVariants.introText && {
+      ...theme.typography.h2
+    })
   })
+  //
+  // Use the ownerState to set dynamic styles
+  // root: ({ ownerState, theme }) => {
+  //   return {
+  //     backgroundColor: ownerState.variant === 'example' ? 'red' : theme.vars.palette.background.paper
+  //   };
+  // }
 };
 
-// https://mui.com/customization/theme-components/#adding-new-component-variants
-const createVariants = (_theme: Theme): ComponentsVariants['Text'] => [];
+const createVariants = (_theme: Theme): ComponentsVariants['Text'] => [
+  // Use prop matching to set variant styles
+  {
+    props: {
+      variant: 'inline'
+    },
+    style: {
+      // TODO: Pulled from Text, but adds default padding around elements.   Classes may be wrong
+      '& > [class*=Text-root] > *:not(:first-child)': {
+        '&:not(:is(ul, ol, li))': {
+          marginTop: '1em',
+          marginBottom: '2em'
+        },
 
-export default (theme: Theme): ThemeOptions => ({
+        '&:is(ul, ol)': {
+          marginTop: '-1em',
+          marginBottom: '3em'
+        }
+      },
+
+      '& > [class*=Text-root] > *:first-child': {
+        marginTop: '0'
+      },
+
+      '[class*=MuiTypography-h]': {
+        marginBottom: '.5em',
+        marginTop: '2em'
+      }
+    }
+  },
+
+  {
+    props: {
+      variant: 'introText'
+    },
+    style: ({ theme }: { theme: Theme }) => ({
+      marginBottom: theme.spacing(4)
+    })
+  }
+];
+
+export const textTheme = (theme: Theme): ThemeOptions => ({
   components: {
     Text: {
       defaultProps,
@@ -53,3 +111,5 @@ export default (theme: Theme): ThemeOptions => ({
     }
   }
 });
+
+export default textTheme;

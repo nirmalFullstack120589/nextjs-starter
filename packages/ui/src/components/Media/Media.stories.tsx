@@ -1,12 +1,17 @@
-import React from 'react';
-import Box from '@mui/material/Box';
 import Media from './Media';
-import { mediaMock, mediaVideoMock, responsiveMediaMock, SVGMediaMock, ExternalSVGMediaMock } from './Media.mock';
+import {
+  mediaBaseImageMock,
+  mediaVideoMock,
+  responsiveMediaBaseImageMock,
+  mediaSVGMock,
+  mediaExternalSVGMock
+} from './Media.mock';
 
 export default {
-  title: '1. LR Components / Media',
+  title: 'Elements/Media',
   component: Media,
 
+  tags: ['autodocs'],
   argTypes: {
     file: { name: 'File URL' },
     title: { name: 'Title' },
@@ -16,18 +21,12 @@ export default {
   }
 };
 
-const Template = (args: JSX.IntrinsicAttributes) => <Media {...args} />;
-export const Default = Template.bind({});
-Default.args = { ...mediaMock() };
+export const Default = { args: { ...mediaBaseImageMock() } };
 
-export const InlineSVG = Template.bind({});
-InlineSVG.args = { ...SVGMediaMock };
+export const InlineSVG = { args: { ...mediaSVGMock } };
 
-export const SVG = Template.bind({});
-SVG.args = { ...ExternalSVGMediaMock };
+export const SVG = { args: { ...mediaExternalSVGMock } };
 
-export const Responsive = Template.bind({});
-Responsive.args = { ...responsiveMediaMock };
+export const Responsive = { args: { ...responsiveMediaBaseImageMock } };
 
-export const Video = Template.bind({});
-Video.args = { ...mediaVideoMock() };
+export const Video = { args: { ...mediaVideoMock() } };

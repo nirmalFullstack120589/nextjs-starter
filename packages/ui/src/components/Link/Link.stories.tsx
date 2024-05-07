@@ -1,29 +1,36 @@
 import React from 'react';
-import Box from '@mui/material/Box';
-import Link from './Link';
-import mockContent from './Link.mock';
+import LinkComponent from './Link';
+import { linkTextMock } from './Link.mock';
 
 export default {
-  title: '1. LR Components / Link',
-  component: Link,
+  title: 'Elements/Link',
+  component: LinkComponent,
+  tags: ['autodocs'],
   argTypes: {
+    sx: { table: { disable: true } },
+    noLinkStyle: { table: { disable: true } },
+    activeClassName: { table: { disable: true } },
+    sidekickLookup: { table: { disable: true } },
     variant: {
       name: 'Variant',
       control: {
-        type: 'select',
-        options: ['link', 'button-contained', 'button-outlined', 'button-text', '']
+        // type: { type: 'select' },
       },
-      table: {
-        defaultValue: { summary: 'link' }
-      }
+      options: ['link', 'buttonContained', 'buttonOutlined', 'button-text', '']
     },
-    text: { name: 'Text' },
-    href: { name: 'Href' },
     icon: {
       name: 'Icon',
       control: {
         type: 'select',
-        options: ['instagram', 'facebook', 'twitter', 'youtube', 'chevron-right', 'caret-right', '']
+        options: [
+          'instagram',
+          'facebook',
+          'twitter',
+          'youtube',
+          'chevron-right',
+          'caret-right',
+          null
+        ]
       },
       table: {
         defaultValue: { summary: '' }
@@ -39,20 +46,13 @@ export default {
         defaultValue: { summary: 'Right' }
       }
     },
-    type: {
-      name: 'Type',
-      control: {
-        type: 'inline-radio',
-        options: ['button', 'submit', 'reset']
-      },
-      table: {
-        defaultValue: { summary: '' }
-      }
-    },
+    onClick: { table: { disable: true } },
+    id: { table: { disable: true } },
     __typename: { table: { disable: true } }
   }
 };
 
-const Template = (args: JSX.IntrinsicAttributes) => <Link __typename="Link" {...args} />;
-export const Default = Template.bind({});
-Default.args = { ...mockContent() };
+export const Link = { args: { ...linkTextMock() } };
+export const ButtonContained = { args: { ...Link.args, variant: 'buttonContained' } };
+export const ButtonOutlined = { args: { ...Link.args, variant: 'buttonOutlined' } };
+export const ButtonText = { args: { ...Link.args, variant: 'button-text' } };

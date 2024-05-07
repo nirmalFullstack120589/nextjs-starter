@@ -1,41 +1,56 @@
-import { Quote_BaseFragmentFragment } from '@repo/graphql-sdk';
-import { LinkProps } from '../Link';
+import type {
+  ComponentsOverrides,
+  ComponentsVariants,
+  ComponentsProps,
+  LinkProps
+} from '@mui/material';
+
+import type { Quote_BaseFragmentFragment } from '@graphql-sdk/types';
 import { MediaProps } from '../Media';
 
-export interface QuoteProps extends Quote_BaseFragmentFragment {
-  variant?: 'one-column' | 'two-column';
-  // __typename?: string;
-  id?: string;
-  sidekickLookup?: any;
-  quote: string;
-  authorName?: string;
-  authorImage?: MediaProps;
-  authorTitle?: string;
-  logo?: MediaProps;
-  actions?: Array<LinkProps>;
+export enum QuoteVariants {
+  default = 'default',
+  large = 'large',
+  inline = 'inline'
 }
 
-export interface QuoteClasses {
-  /** Styles applied to the root element. */
+export interface QuoteProps extends Quote_BaseFragmentFragment {
+  variant?: string;
+}
+
+export interface QuoteOwnerState extends QuoteProps {}
+
+interface QuoteClasses {
   root: string;
-  /** Styles applied to the authorRoot element. */
+  background: string;
+  contentOuterGrid: string;
   authorRoot: string;
-  /** Styles applied to the mediaItem element. */
-  mediaItem: string;
-  /** Styles applied to the authorImage element. */
-  authorImage: string;
-  /** Styles applied to the quoteText element. */
+  logo: string;
+  image: string;
   quoteText: string;
-  /** Styles applied to the authorName element. */
   authorName: string;
-  /** Styles applied to the quoteSymbol element. */
   quoteSymbol: string;
-  /** Styles applied to the authorTitle element. */
   authorTitle: string;
-  /** Styles applied to the actionsRoot element. */
-  actionsRoot: string;
 }
 
 export declare type QuoteClassKey = keyof QuoteClasses;
-declare const accordionClasses: QuoteClasses;
-export default accordionClasses;
+
+declare module '@mui/material/styles' {
+  export interface ComponentNameToClassKey {
+    Quote: QuoteClassKey;
+  }
+
+  export interface ComponentsPropsList {
+    Quote: QuoteProps;
+  }
+}
+
+declare module '@mui/material/styles' {
+  interface Components {
+    Quote?: {
+      defaultProps?: ComponentsProps['Quote'];
+      styleOverrides?: ComponentsOverrides<Theme>['Quote'];
+      variants?: ComponentsVariants['Quote'];
+    };
+  }
+}

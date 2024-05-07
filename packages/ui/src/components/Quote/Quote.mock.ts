@@ -1,34 +1,37 @@
-import { random } from 'faker';
-import { mediaMock } from '../Media/Media.mock';
-import { QuoteProps } from './Quote.types';
+import { mediaBaseImageMock } from '../Media/Media.mock';
 
-export const mockQuoteBase = (): QuoteProps => {
-  return {
+import { randomId } from '../utils/randomId';
+
+import type { QuoteProps } from './Quote.types';
+
+export const quoteDefaultMock = (override?: Partial<QuoteProps>): QuoteProps => {
+  const baseMock: QuoteProps = {
+    id: randomId(),
     __typename: 'Quote',
-    id: random.alphaNumeric(10),
-    variant: 'one-column',
-    authorImage: mediaMock(),
+    variant: 'default',
     quote: 'Get in touch and learn how our services can help you!',
     authorName: `Adam Harris`,
     authorTitle: `Co-Founder`,
-    logo: mediaMock()
+    logo: mediaBaseImageMock(),
+    image: mediaBaseImageMock()
   };
+
+  return baseMock;
 };
 
-export const mockQuoteOneColumn = (): QuoteProps => {
-  return {
-    ...mockQuoteBase(),
-    variant: 'one-column',
-    authorImage: mediaMock()
-  };
-};
+export const quoteBaseMock = ({ ...override } = {}): QuoteProps => ({
+  ...quoteDefaultMock(override)
+});
 
-export const mockQuoteTwoColumn = (): QuoteProps => {
-  return {
-    ...mockQuoteBase(),
-    variant: 'two-column',
-    authorImage: mediaMock()
-  };
-};
+export const quoteLargeMock = ({ ...override } = {}): QuoteProps => ({
+  ...quoteDefaultMock(override),
+  variant: 'large'
+});
 
-export default mockQuoteBase;
+export const quoteInlineMock = ({ ...override } = {}): QuoteProps => ({
+  ...quoteDefaultMock(override),
+
+  variant: 'inline'
+});
+
+export default quoteBaseMock;

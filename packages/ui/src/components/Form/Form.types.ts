@@ -1,14 +1,46 @@
-import { ModuleIntegration_BaseFragmentFragment } from '@repo/graphql-sdk';
+import type { ComponentsOverrides, ComponentsVariants, ComponentsProps } from '@mui/material';
 
-export interface FormProps extends ModuleIntegration_BaseFragmentFragment {
-  submitted?: boolean;
-  hasSuccessMessage?: boolean;
+import type { Form_BaseFragmentFragment } from '@graphql-sdk/types';
+
+export enum FormVariants {
+  default = 'default',
+  footer = 'footer'
 }
 
-export interface FormClasses {
+export interface FormProps extends Form_BaseFragmentFragment {
+  submitted?: boolean;
+  hasSuccessMessage?: boolean;
+  variant: FormVariants;
+}
+
+export interface FormOwnerState extends FormProps {}
+
+interface FormClasses {
   root: string;
-  formContainer: string;
-  formOuterContainer: string;
+  introTextGrid: string;
+  introText: string;
+  contentOuterGrid: string;
+  mainContentWrap: string;
 }
 
 export declare type FormClassKey = keyof FormClasses;
+
+declare module '@mui/material/styles' {
+  export interface ComponentNameToClassKey {
+    Form: FormClassKey;
+  }
+
+  export interface ComponentsPropsList {
+    Form: FormProps;
+  }
+}
+
+declare module '@mui/material/styles' {
+  interface Components {
+    Form?: {
+      defaultProps?: ComponentsProps['Form'];
+      styleOverrides?: ComponentsOverrides<Theme>['Form'];
+      variants?: ComponentsVariants['Form'];
+    };
+  }
+}

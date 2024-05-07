@@ -1,46 +1,95 @@
-import { Theme, ThemeOptions, ComponentsProps, ComponentsOverrides, ComponentsVariants } from '@mui/material/styles';
+import type {
+  ThemeOptions,
+  ComponentsProps,
+  ComponentsOverrides,
+  ComponentsVariants
+} from '@mui/material/styles';
+import { Theme } from '@ui/ThemeRegistry/theme.types';
 
-// https://mui.com/customization/theme-components/#default-props
-export const defaultProps: ComponentsProps['Quote'] = {};
+const defaultProps: ComponentsProps['Quote'] = {};
 
-// https://mui.com/customization/theme-components/#global-style-overrides
-export const styleOverrides: ComponentsOverrides<Theme>['Quote'] = {
-  // Set some static styles
-  // root: {
-  //   backgroundColor: 'red'
-  // }
-  //
-  // Use the ownerState to set dynamic styles
-  // root: ({ ownerState, theme }) => {
-  //   return {
-  //     backgroundColor: ownerState.variant === 'example' ? 'red' : theme.palette.background.paper
-  //   };
-  // }
+const styleOverrides: ComponentsOverrides<Theme>['Quote'] = {
+  root: ({ theme, ownerState }) => ({
+    ...theme.mixins.applyBackgroundColor({ ownerState, theme }),
+    containerType: 'inline-size',
+    padding: `var(--section-padding) 0`
+  }),
+
+  // contentGrid: : {},
+
+  logo: ({ theme }) => ({
+    gridRow: 1,
+    gridColumn: 'content-quarter/content-three-quarter',
+
+    [theme.containerBreakpoints.up('sm')]: {
+      gridColumn: 'four-start/five-end'
+    },
+
+    [theme.containerBreakpoints.up('md')]: {
+      gridColumn: 'six-start/seven-end'
+    },
+
+    [theme.containerBreakpoints.up('lg')]: {
+      gridColumn: 'six-start/seven-end'
+    }
+  }),
+
+  quoteText: ({ theme }) => ({
+    gridRow: 2,
+    gridColumn: 'content-start/content-end',
+    textAlign: 'center',
+    ...theme.typography.display4,
+
+    [theme.containerBreakpoints.up('sm')]: {
+      gridColumn: 'content-quarter/content-three-quarter'
+    }
+  }),
+
+  // quoteSymbol: : {},
+
+  authorRoot: {
+    display: 'contents'
+  },
+
+  image: ({ theme }) => ({
+    gridRow: '3/5',
+    gridColumn: 'content-start/one-end',
+
+    [theme.containerBreakpoints.up('md')]: {
+      gridColumn: 'content-quarter/content-half'
+    },
+
+    [theme.containerBreakpoints.up('lg')]: {
+      gridColumn: 'six-start/content-half'
+    }
+  }),
+
+  authorName: ({ theme }) => ({
+    gridRow: 3,
+    gridColumn: 'two-start/content-end',
+    lineHeight: 1,
+    alignSelf: 'flex-end',
+
+    [theme.containerBreakpoints.up('md')]: {
+      gridColumn: 'content-half/content-end'
+    }
+  }),
+
+  authorTitle: ({ theme }) => ({
+    gridRow: 4,
+    gridColumn: 'two-start/content-end',
+    fontStyle: 'italic',
+    lineHeight: 1,
+
+    [theme.containerBreakpoints.up('md')]: {
+      gridColumn: 'content-half/content-end'
+    }
+  })
 };
 
-// https://mui.com/customization/theme-components/#adding-new-component-variants
-const createVariants = (_theme: Theme): ComponentsVariants['Quote'] => [
-  // Use prop matching to set variant styles
-  // {
-  //   props: {
-  //     variant: 'example'
-  //   },
-  //   style: {
-  //     backgroundColor: theme.palette.primary.main
-  //   }
-  // }
-  // Other props are also valid
-  // {
-  //   props: {
-  //     backgroundColor: 'primary.main',
-  //   },
-  //   style: {
-  //     color: theme.palette.primary.contrastText
-  //   }
-  // }
-];
+const createVariants = (_theme: Theme): ComponentsVariants['Quote'] => [];
 
-export default (theme: Theme): ThemeOptions => ({
+export const quoteTheme = (theme: Theme): ThemeOptions => ({
   components: {
     Quote: {
       defaultProps,
@@ -49,3 +98,5 @@ export default (theme: Theme): ThemeOptions => ({
     }
   }
 });
+
+export default quoteTheme;

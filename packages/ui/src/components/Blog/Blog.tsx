@@ -1,582 +1,380 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
+import Script from 'next/script';
+
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import MuiAvatar from '@mui/material/Avatar';
+import Typography, { type TypographyProps } from '@mui/material/Typography';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import Container from '@mui/material/Container';
-import Typography, { TypographyProps } from '@mui/material/Typography';
-import MuiAvatar from '@mui/material/Avatar';
-import ButtonBase from '@mui/material/ButtonBase';
+
 import sidekick from '@last-rev/contentful-sidekick-util';
 
+import Grid from '../Grid';
+import Breadcrumbs from '../Breadcrumbs';
 import ContentModule from '../ContentModule';
-
-import { BlogProps } from './Blog.types';
-import { MediaProps } from '../Media/Media.types';
-import { LinkProps } from '../Link';
 import TwitterIcon from '../Icons/TwitterIcon';
 import FacebookIcon from '../Icons/FacebookIcon';
 import LinkedinIcon from '../Icons/LinkedinIcon';
 import EmailIcon from '../Icons/EmailIcon';
 import CopyLinkIcon from '../Icons/CopyLinkIcon';
 
-const Blog = ({
-  header,
-  footer,
-  featuredMedia,
-  pubDate,
-  title,
-  body,
-  author,
-  relatedItems,
-  breadcrumbs,
-  sidekickLookup,
-  summary,
-  contents,
-  modelUsed,
-  promptedBy,
-  imagesGeneratedBy
-}: BlogProps) => {
-  const asPath  = usePathname();
+import type { BlogProps, BlogOwnerState } from './Blog.types';
+import { type MediaProps } from '../Media';
+import { type LinkProps } from '../Link';
+
+const Blog = (props: BlogProps) => {
+  const ownerState = { ...props };
+
+  const {
+    id,
+    header,
+    footer,
+    featuredMedia,
+    pubDate,
+    title,
+    body,
+    author,
+    relatedItems,
+    jsonLd,
+    breadcrumbs,
+    sidekickLookup,
+    hero
+  } = props;
+
+  const pathname = usePathname();
   const [shareUrl, setShareUrl] = React.useState('');
   const encodedShareUrl = encodeURIComponent(shareUrl);
 
   React.useEffect(() => {
-    const origin = typeof window !== 'undefined' && window.location.origin ? window.location.origin : '';
-    setShareUrl(`${origin}${asPath}`);
-  }, [asPath]);
+    const origin =
+      typeof window !== 'undefined' && window.location.origin ? window.location.origin : '';
+    setShareUrl(`${origin}${pathname}`);
+  }, [pathname]);
 
   return (
     <>
+      {!!jsonLd && (
+        <Script type="application/ld+json" id={`blog-${id}-jsonld`}>
+          {jsonLd}
+        </Script>
+      )}
+
       {header ? <ContentModule {...(header as any)} /> : null}
 
-      <Root component="main" {...sidekick(sidekickLookup)}>
-        <HeaderContainer>
-          {/* TODO: Move Breadcrumb to its own component */}
-          {!!breadcrumbs?.length && (
-            <Breadcrumb>
-              {breadcrumbs.map((breadcrumb) => (
-                <BreadcrumbItem key={breadcrumb?.id} {...breadcrumb} />
-              ))}
-            </Breadcrumb>
-          )}
+      <Root component="main" {...sidekick(sidekickLookup)} ownerState={ownerState}>
+        <ContentOuterGrid ownerState={ownerState}>
+          <HeaderWrap ownerState={ownerState}>
+            {hero ? (
+              <ContentModule {...(hero as any)} />
+            ) : (
+              <>
+                {!!title && (
+                  <Title component="h1" variant="display1" ownerState={ownerState}>
+                    {title}
+                  </Title>
+                )}
 
-          {!!title && <Title component="h1">{title}</Title>}
-          {!!pubDate && <PubDate variant="body1">Published: {pubDate}</PubDate>}
-          {!!author && (
-            <AAIListWrap>
-              Written By:
-              <AAIList>
-                <AAIListItem sx={{ display: 'inline' }}>{author.name}</AAIListItem>
-              </AAIList>
-            </AAIListWrap>
-          )}
+                {!!pubDate && <PubDate ownerState={ownerState}>{pubDate}</PubDate>}
+              </>
+            )}
+          </HeaderWrap>
 
-          {!!promptedBy?.length && (
-            <AAIListWrap>
-              Prompted By:
-              <AAIList>
-                {promptedBy.map((pb?: string) => (
-                  <AAIListItem key={pb} sx={{ display: 'inline' }}>
-                    {pb}
-                  </AAIListItem>
-                ))}
-              </AAIList>
-            </AAIListWrap>
-          )}
+          <ContentWrap ownerState={ownerState}>
+            {!!breadcrumbs?.length ? (
+              <BreadcrumbsWrap ownerState={ownerState}>
+                <Breadcrumbs links={breadcrumbs} />
+              </BreadcrumbsWrap>
+            ) : null}
 
-          {!!modelUsed?.length && (
-            <AAIListWrap>
-              Model:
-              <AAIList>
-                {modelUsed.map((model?: string) => (
-                  <AAIListItem key={model} sx={{ display: 'inline' }}>
-                    {model}
-                  </AAIListItem>
-                ))}
-              </AAIList>
-            </AAIListWrap>
-          )}
-
-          {!!imagesGeneratedBy?.length && (
-            <AAIListWrap>
-              Images:
-              <AAIList>
-                {imagesGeneratedBy.map((imageBy?: string) => (
-                  <AAIListItem key={imageBy}>{imageBy}</AAIListItem>
-                ))}
-              </AAIList>
-            </AAIListWrap>
-          )}
-
-          {!!summary && <Summary variant="body1">{summary}</Summary>}
-        </HeaderContainer>
-
-        <ContentContainer>
-          <ContentWrap>
             {!!featuredMedia && (
-              <FeaturedMediaWrap {...sidekick(sidekickLookup, 'featuredMedia')}>
-                <FeaturedMedia {...(featuredMedia as MediaProps)} />
+              <FeaturedMediaWrap
+                {...sidekick(sidekickLookup, 'featuredMedia')}
+                ownerState={ownerState}
+              >
+                <FeaturedMedia {...(featuredMedia as MediaProps)} ownerState={ownerState} />
               </FeaturedMediaWrap>
             )}
+
             {!!body && (
-              <BodyWrap>
-                {!!body && (
-                  <Body {...sidekick(sidekickLookup, 'body')} __typename="Text" body={body} variant="detailPageBody" />
-                )}
-              </BodyWrap>
+              <Body
+                body={body}
+                sidekickLookup={sidekickLookup}
+                variant="inline"
+                __typename="RichText"
+                ownerState={ownerState}
+              />
             )}
 
-            <ShareLinksWrapper>
-              <ShareLinksLabel variant="body1">Share</ShareLinksLabel>
+            <ShareLinksWrap ownerState={ownerState}>
+              <ShareLinksLabel ownerState={ownerState}>Share</ShareLinksLabel>
 
-              <ShareLinks>
-                <ShareLink href={`http://www.twitter.com/share?url=${encodedShareUrl}`} target="_blank">
-                  <TwitterIcon />
-                  <Typography>Twitter</Typography>
+              <ShareLinks ownerState={ownerState}>
+                <ShareLink ownerState={ownerState}>
+                  <ShareLinkItem
+                    __typename="Link"
+                    href={`http://www.twitter.com/share?url=${encodedShareUrl}`}
+                    target="_blank"
+                    icon={TwitterIcon}
+                    text="Twitter"
+                    ownerState={ownerState}
+                  />
                 </ShareLink>
-                <ShareLink href={`https://www.facebook.com/sharer/sharer.php?u=${encodedShareUrl}`} target="_blank">
-                  <FacebookIcon />
-                  <Typography>Facebook</Typography>
+
+                <ShareLink ownerState={ownerState}>
+                  <ShareLinkItem
+                    __typename="Link"
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodedShareUrl}`}
+                    target="_blank"
+                    icon={FacebookIcon}
+                    text="Facebook"
+                    ownerState={ownerState}
+                  />
                 </ShareLink>
-                <ShareLink
-                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedShareUrl}`}
-                  target="_blank">
-                  <LinkedinIcon />
-                  <Typography>Linkedin</Typography>
+
+                <ShareLink ownerState={ownerState}>
+                  <ShareLinkItem
+                    __typename="Link"
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedShareUrl}`}
+                    target="_blank"
+                    icon={LinkedinIcon}
+                    text="Linkedin"
+                    ownerState={ownerState}
+                  />
                 </ShareLink>
-                <ShareLink href={`mailto:?to=&body=${encodedShareUrl}`}>
-                  <EmailIcon />
-                  <Typography>Email</Typography>
+
+                <ShareLink ownerState={ownerState}>
+                  <ShareLinkItem
+                    __typename="Link"
+                    href={`mailto:?to=&body=${encodedShareUrl}`}
+                    target="_blank"
+                    icon={EmailIcon}
+                    text="Email"
+                    ownerState={ownerState}
+                  />
                 </ShareLink>
-                <ShareLink
-                  onClick={() => {
-                    navigator.clipboard.writeText(shareUrl);
-                  }}>
-                  <CopyLinkIcon />
-                  <Typography>Copy Link</Typography>
+
+                <ShareLink ownerState={ownerState}>
+                  <ShareLinkItem
+                    __typename="Link"
+                    target="_blank"
+                    icon={CopyLinkIcon}
+                    text="Copy Link"
+                    ownerState={ownerState}
+                    onClick={() => {
+                      navigator.clipboard.writeText(shareUrl);
+                    }}
+                  />
                 </ShareLink>
               </ShareLinks>
-            </ShareLinksWrapper>
+            </ShareLinksWrap>
           </ContentWrap>
 
-          {!!relatedItems?.length && (
-            <RelatedItemsWrapper>
-              <ResourcesLabel variant="body2">Related Items</ResourcesLabel>
-              <RelatedItems>
-                {relatedItems.map((item) => (
-                  <RelatedItem key={item?.id} {...item} />
-                ))}
-              </RelatedItems>
-            </RelatedItemsWrapper>
-          )}
-
           {!!author && (
-            <AuthorContainer>
-              {(!!author.image || !!author.name) && (
-                <Author>
-                  {!!author.image && (
-                    <Avatar size="large">
-                      <AvatarImage {...author.image} />
-                    </Avatar>
-                  )}
-                  {/* TODO: The variant for this text does not exist on Figma */}
-                  {!!author.name && <AuthorName>{author.name}</AuthorName>}
-                </Author>
+            <AuthorWrap ownerState={ownerState}>
+              {!!author.mainImage && (
+                <AuthorImageWrap ownerState={ownerState}>
+                  <AuthorImage {...author.mainImage} ownerState={ownerState} />
+                </AuthorImageWrap>
+              )}
+
+              {!!author.name && (
+                <AuthorName ownerState={ownerState} variant="display4">
+                  {author.name}
+                </AuthorName>
               )}
 
               {!!author.body && (
-                <AuthorSummary
-                  {...sidekick(sidekickLookup, 'body')}
-                  __typename="Text"
-                  body={author.body}
-                  variant="detailPageBody"
-                />
+                <AuthorSummaryWrap ownerState={ownerState}>
+                  <AuthorSummary
+                    body={author.body}
+                    variant="bodyLarge"
+                    __typename="RichText"
+                    ownerState={ownerState}
+                  />
+                </AuthorSummaryWrap>
               )}
 
               {!!author.socialLinks?.length && (
-                <AuthorSocialLinks>
-                  {author.socialLinks.map((link) => (
-                    <AuthorSocialLink {...(link as LinkProps)} />
+                <AuthorSocialLinks ownerState={ownerState}>
+                  {author.socialLinks.map((link, index) => (
+                    <AuthorSocialLink
+                      key={`author-social-link-${index}=${link?.href}`}
+                      {...(link as LinkProps)}
+                      ownerState={ownerState}
+                    />
                   ))}
                 </AuthorSocialLinks>
               )}
-            </AuthorContainer>
+            </AuthorWrap>
           )}
-        </ContentContainer>
-        {!!contents?.length && (
-          <ContentContainer>
-            <Content>
-              {contents?.map((content: any) => (
-                <ContentModule key={content?.id} {...content} />
-              ))}
-            </Content>
-          </ContentContainer>
+        </ContentOuterGrid>
+
+        {!!relatedItems && (
+          <RelatedItems {...relatedItems} ownerState={ownerState} backgroundColor="white" />
         )}
       </Root>
+
       {footer ? <ContentModule {...(footer as any)} /> : null}
     </>
   );
 };
 
 const Root = styled(Box, {
-  name: 'Blog',
+  name: 'Page',
   slot: 'Root',
   overridesResolver: (_, styles) => [styles.root]
-})(({ theme }) => ({
-  'header[class*=elevation0] + & ': {
-    padding: theme.spacing(25, 0, 0)
-  }
-}));
+})<{ ownerState: BlogOwnerState }>``;
 
-const HeaderContainer = styled(Container, {
+const ContentOuterGrid = styled(Grid, {
   name: 'Blog',
-  slot: 'ContentContainer',
-  overridesResolver: (_, styles) => [styles.contentContainer]
-})<{ variant?: string }>(({ theme }) => ({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(1, 1fr)',
-  gap: theme.spacing(2),
-  marginBottom: theme.spacing(8)
-}));
+  slot: 'ContentOuterGrid',
+  overridesResolver: (_, styles) => [styles.contentOuterGrid]
+})<{ ownerState: BlogOwnerState }>``;
 
-const ContentContainer = styled(Container, {
+const HeaderWrap = styled(Box, {
   name: 'Blog',
-  slot: 'ContentContainer',
-  overridesResolver: (_, styles) => [styles.contentContainer]
-})<{ variant?: string }>(({ theme }) => ({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(12, 1fr)',
-  gap: theme.spacing(4, 2)
-}));
+  slot: 'HeaderWrap',
+  overridesResolver: (_, styles) => [styles.headerWrap]
+})<{ ownerState: BlogOwnerState }>``;
 
-const Breadcrumb = styled(Box, {
+const BreadcrumbsWrap = styled(Box, {
   name: 'Blog',
-  slot: 'Breadcrumb',
-  overridesResolver: (_, styles) => [styles.breadcrumb]
-})(({}) => ({
-  'gridColumn': '1 / -1',
-  'gridRow': '1',
-  'alignItems': 'center',
-  'maxWidth': '100%',
-  'overflow': 'hidden',
-  'overflowWrap': 'break-word',
-  'textOverflow': 'ellipsis',
-  'display': '-webkit-box',
-  'hyphens': 'auto',
-  '-webkit-line-clamp': '1',
-  '-webkit-box-orient': 'vertical'
-}));
-
-const BreadcrumbItem = styled(ContentModule, {
-  name: 'Blog',
-  slot: 'BreadcrumbItem',
-  overridesResolver: (_, styles) => [styles.breadcrumbItem]
-})(({ theme }) => ({
-  textDecoration: 'none',
-  borderLeft: `1px solid ${theme.palette.secondary.main}`,
-  paddingLeft: theme.spacing(0.5),
-  ...theme.typography.bodySmall,
-  color: theme.palette.primary.main,
-  marginRight: theme.spacing(1)
-}));
-
-const BodyWrap = styled(Box, {
-  name: 'Blog',
-  slot: 'BodyWrap',
-  overridesResolver: (_, styles) => [styles.bodyWrap]
-})(() => ({}));
+  slot: 'BreadcrumbsWrap',
+  overridesResolver: (_, styles) => [styles.breadcrumbsWrap]
+})<{ ownerState: BlogOwnerState }>``;
 
 const Title = styled(Typography, {
   name: 'Blog',
   slot: 'Title',
   overridesResolver: (_, styles) => [styles.title]
-})<TypographyProps<React.ElementType>>(() => ({}));
-
-const Summary = styled(Typography, {
-  name: 'Blog',
-  slot: 'Summary',
-  overridesResolver: (_, styles) => [styles.summary]
-})<TypographyProps<React.ElementType>>(({ theme }) => ({
-  marginBottom: theme.spacing(4),
-  display: 'inline-block'
-}));
+})<TypographyProps & { ownerState: BlogOwnerState }>``;
 
 const PubDate = styled(Typography, {
   name: 'Blog',
   slot: 'PubDate',
   overridesResolver: (_, styles) => [styles.pubDate]
-})<TypographyProps<React.ElementType>>(({ theme }) => ({
-  gridColumn: '1 / -1',
-  gridRow: '3',
-  ...theme.typography.bodySmall
-}));
+})<TypographyProps & { ownerState: BlogOwnerState }>``;
 
 const Author = styled(Box, {
   name: 'Blog',
   slot: 'Author',
   overridesResolver: (_, styles) => [styles.author]
-})(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'flex-end',
-  gap: theme.spacing(1.5)
-}));
+})<{ ownerState: BlogOwnerState }>``;
 
-const AAIListWrap = styled(Box, {
+const AuthorImageWrap = styled(Box, {
   name: 'Blog',
-  slot: 'AAIListWrap',
-  overridesResolver: (_, styles) => [styles.aaiListWrap]
-})(({ theme }) => ({
-  display: 'inline-block',
-  padding: 0,
-  ...theme.typography.bodySmall
-}));
+  slot: 'AuthorImageWrap',
+  overridesResolver: (_, styles) => [styles.authorImageWrap]
+})<{ ownerState: BlogOwnerState }>``;
 
-const AAIList = styled(List, {
+const AuthorImage = styled(ContentModule, {
   name: 'Blog',
-  slot: 'AAIList',
-  overridesResolver: (_, styles) => [styles.aaiList]
-})(({ theme }) => ({
-  display: 'inline-block',
-  padding: 0,
-  ...theme.typography.bodySmall
-}));
-
-const AAIListItem = styled(ListItem, {
-  name: 'Blog',
-  slot: 'AAIListItem',
-  overridesResolver: (_, styles) => [styles.aaiListItem]
-})(({ theme }) => ({
-  'display': 'inline',
-  'paddingLeft': theme.spacing(1),
-
-  '&::after': {
-    content: '", "'
-  },
-
-  '&:last-child::after': {
-    content: 'unset'
-  }
-}));
-
-const Avatar = styled(MuiAvatar, {
-  name: 'Blog',
-  slot: 'Avatar',
-  overridesResolver: (_, styles) => [styles.avatar]
-})<{ size?: string }>(({ theme, size }) => ({
-  width: theme.spacing(8),
-  height: theme.spacing(8),
-  aspectRatio: '1/1',
-
-  ...(size === 'large' && {
-    width: theme.spacing(12),
-    height: theme.spacing(12)
-  })
-}));
-
-const AvatarImage = styled(ContentModule, {
-  name: 'Blog',
-  slot: 'AvatarImage',
-  overridesResolver: (_, styles) => [styles.avatarImage]
-})(() => ({
-  objectFit: 'cover',
-  aspectRatio: 'inherit'
-}));
+  slot: 'AuthorImage',
+  overridesResolver: (_, styles) => [styles.authorImage]
+})<{ ownerState: BlogOwnerState }>``;
 
 const AuthorName = styled(Typography, {
   name: 'Blog',
   slot: 'AuthorName',
   overridesResolver: (_, styles) => [styles.authorName]
-})<TypographyProps<React.ElementType>>(({ theme }) => ({
-  'paddingBottom': theme.spacing(1.5),
-
-  '& span': {
-    ...theme.typography.body1,
-    fontWeight: 700
-  }
-}));
+})<{ ownerState: BlogOwnerState }>``;
 
 const FeaturedMediaWrap = styled(Box, {
   name: 'Blog',
   slot: 'FeaturedMediaWrap',
   overridesResolver: (_, styles) => [styles.featuredMediaWrap]
-})(() => ({}));
+})<{ ownerState: BlogOwnerState }>``;
 
 const FeaturedMedia = styled(ContentModule, {
   name: 'Blog',
   slot: 'FeaturedMedia',
   overridesResolver: (_, styles) => [styles.featuredMedia]
-})(() => ({}));
+})<{ ownerState: BlogOwnerState }>``;
 
-const ShareLinksWrapper = styled(Box, {
+const ShareLinksWrap = styled(Box, {
   name: 'Blog',
-  slot: 'ShareLinksWrapper',
-  overridesResolver: (_, styles) => [styles.shareLinksWrapper]
-})(() => ({}));
+  slot: 'ShareLinksWrap',
+  overridesResolver: (_, styles) => [styles.shareLinksWrap]
+})<{ ownerState: BlogOwnerState }>``;
 
 const ShareLinksLabel = styled(Typography, {
   name: 'Blog',
   slot: 'ShareLinksLabel',
   overridesResolver: (_, styles) => [styles.shareLinksLabel]
-})<TypographyProps<React.ElementType>>(() => ({
-  fontWeight: 700
-}));
+})<{ ownerState: BlogOwnerState }>``;
 
-const ShareLinks = styled(Box, {
+const ShareLinks = styled(List, {
   name: 'Blog',
   slot: 'ShareLinks',
   overridesResolver: (_, styles) => [styles.shareLinks]
-})(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'flex-start',
-  gap: theme.spacing(1)
-}));
+})<{ ownerState: BlogOwnerState }>``;
 
-const ShareLink = styled((props) => <ButtonBase {...props} disableRipple disableTouchRipple />, {
+const ShareLink = styled(ListItem, {
   name: 'Blog',
-  slot: 'ShareLink',
+  slot: 'ShareLShareLinkinks',
   overridesResolver: (_, styles) => [styles.shareLink]
-})<{ href?: string; target?: string; onClick?: any }>(({ theme }) => ({
-  'gap': theme.spacing(1),
+})<{ ownerState: BlogOwnerState }>``;
 
-  '& svg': {
-    width: theme.spacing(2),
-    height: theme.spacing(2)
-  },
-
-  '& .MuiTypography-root': {
-    display: 'none'
-  },
-
-  [theme.breakpoints.up('md')]: {
-    'gap': theme.spacing(1),
-    '& .MuiTypography-root': {
-      ...theme.typography.bodySmall,
-      display: 'block'
-    }
-  }
-}));
+const ShareLinkItem = styled(ContentModule, {
+  name: 'Blog',
+  slot: 'ShareLinkItem',
+  overridesResolver: (_, styles) => [styles.shareLinkItem]
+})<{ href?: string; target?: string; onClick?: any; ownerState: BlogOwnerState }>``;
 
 const ContentWrap = styled(Box, {
   name: 'Blog',
   slot: 'ContentWrap',
   overridesResolver: (_, styles) => [styles.contentWrap]
-})(({ theme }) => ({
-  gridColumn: '1 / -1',
-  gridRow: '1',
-
-  [theme.breakpoints.up('md')]: {
-    gridColumn: '2 / 9'
-  }
-}));
+})<{ ownerState: BlogOwnerState }>``;
 
 const Body = styled(ContentModule, {
   name: 'Blog',
   slot: 'Body',
   overridesResolver: (_, styles) => [styles.body]
-})(() => ({}));
+})<{ ownerState: BlogOwnerState }>``;
 
-const RelatedItemsWrapper = styled(Box, {
+const RelatedItemsWrap = styled(Box, {
   name: 'Blog',
-  slot: 'RelatedItemsWrapper',
-  overridesResolver: (_, styles) => [styles.relatedItemsWrapper]
-})(({ theme }) => ({
-  gridColumn: '1 / -1',
-  gridRow: '2',
+  slot: 'RelatedItemsWrap',
+  overridesResolver: (_, styles) => [styles.relatedItemsWrap]
+})<{ ownerState: BlogOwnerState }>``;
 
-  [theme.breakpoints.up('md')]: {
-    gridColumn: '9 / 11',
-    gridRow: '1'
-  }
-}));
-
-const ResourcesLabel = styled(Typography, {
-  name: 'Blog',
-  slot: 'ResourcesLabel',
-  overridesResolver: (_, styles) => [styles.resourcesLabel]
-})<TypographyProps<React.ElementType>>(() => ({
-  fontWeight: 700
-}));
-
-const RelatedItems = styled(Box, {
+const RelatedItems = styled(ContentModule, {
   name: 'Blog',
   slot: 'RelatedItems',
   overridesResolver: (_, styles) => [styles.relatedItems]
-})(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(3)
-}));
+})<{ ownerState: BlogOwnerState }>``;
 
-const RelatedItem = styled(ContentModule, {
+const AuthorWrap = styled(Grid, {
   name: 'Blog',
-  slot: 'RelatedItem',
-  overridesResolver: (_, styles) => [styles.relatedItem]
-})(() => ({}));
+  slot: 'AuthorWrap',
+  overridesResolver: (_, styles) => [styles.authorWrap]
+})<{ ownerState: BlogOwnerState }>``;
 
-const AuthorContainer = styled(Box, {
+const AuthorSummaryWrap = styled(Box, {
   name: 'Blog',
-  slot: 'AuthorContainer',
-  overridesResolver: (_, styles) => [styles.authorContainer]
-})(({ theme }) => ({
-  gridColumn: '1 / -1',
-  gridRow: '2',
-  borderTop: `1px solid ${theme.palette.secondary.main}`,
-  padding: theme.spacing(4, 0),
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(2),
-
-  [theme.breakpoints.up('md')]: {
-    gridColumn: '2 / 9'
-  },
-
-  [theme.breakpoints.down('md')]: {
-    '[class*=Blog-author]': {
-      alignItems: 'flex-start',
-      flexDirection: 'column'
-    }
-  }
-}));
+  slot: 'AuthorSummaryWrap',
+  overridesResolver: (_, styles) => [styles.authorSummaryWrap]
+})<{ ownerState: BlogOwnerState }>``;
 
 const AuthorSummary = styled(ContentModule, {
   name: 'Blog',
   slot: 'AuthorSummary',
   overridesResolver: (_, styles) => [styles.authorSummary]
-})(() => ({}));
+})<{ ownerState: BlogOwnerState }>``;
 
 const AuthorSocialLinks = styled(Box, {
   name: 'Blog',
   slot: 'AuthorSocialLinks',
   overridesResolver: (_, styles) => [styles.authorSocialLinks]
-})(({ theme }) => ({
-  'display': 'flex',
-  'gap': theme.spacing(3),
-
-  '.MuiButtonBase-root': {
-    padding: 0
-  },
-
-  'svg': {
-    width: theme.spacing(5),
-    height: theme.spacing(5)
-  }
-}));
+})<{ ownerState: BlogOwnerState }>``;
 
 const AuthorSocialLink = styled(ContentModule, {
   name: 'Blog',
   slot: 'AuthorSocialLink',
   overridesResolver: (_, styles) => [styles.AuthorSocialLink]
-})(() => ({}));
-
-const Content = styled(Box, {
-  name: 'Blog',
-  slot: 'Content',
-  overridesResolver: (_, styles) => [styles.content]
-})(({ theme }) => ({
-  gridColumn: '1 / -1',
-  marginTop: theme.spacing(4)
-}));
+})<{ ownerState: BlogOwnerState }>``;
 
 export default Blog;

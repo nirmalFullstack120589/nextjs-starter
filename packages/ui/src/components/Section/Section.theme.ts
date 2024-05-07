@@ -1,130 +1,109 @@
-import { Theme, ThemeOptions, ComponentsProps, ComponentsOverrides, ComponentsVariants } from '@mui/material/styles';
+import type {
+  ThemeOptions,
+  ComponentsProps,
+  ComponentsOverrides,
+  ComponentsVariants
+} from '@mui/material/styles';
+import { Theme } from '@ui/ThemeRegistry/theme.types';
 
-// https://mui.com/customization/theme-components/#default-props
-export const defaultProps: ComponentsProps['Section'] = {};
+import { SectionVariants } from './Section.types';
 
-// https://mui.com/customization/theme-components/#global-style-overrides
-export const styleOverrides: ComponentsOverrides<Theme>['Section'] = {
-  root: ({ theme, hasBackground }) => {
+const defaultProps: ComponentsProps['Section'] = {};
+
+const styleOverrides: ComponentsOverrides<Theme>['Section'] = {
+  root: {
+    'containerType': 'inline-size',
+    'width': '100%',
+    'position': 'relative',
+
+    'main > &:last-of-type': {
+      marginBottom: 0
+    }
+  },
+
+  introText: { gridColumn: 'content-start / content-end' },
+
+  contentOuterGrid: ({ theme, ownerState }) => ({
+    gridColumn: 'full-start/full-end',
+    gridRow: '1/-1',
+
+    ...((ownerState?.variant === SectionVariants.twoPerRow ||
+      ownerState?.variant === SectionVariants.threePerRow) && {
+      gridTemplateColumns: 'repeat(1, minmax(0, 1fr))',
+
+      ...((ownerState?.variant === SectionVariants.twoPerRow ||
+        ownerState?.variant === SectionVariants.threePerRow) && {
+        [theme.containerBreakpoints.up('md')]: {
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))'
+        }
+      }),
+
+      ...(ownerState?.variant === SectionVariants.threePerRow && {
+        [theme.containerBreakpoints.up('lg')]: {
+          gridTemplateColumns: 'repeat(3, minmax(0, 1fr))'
+        }
+      })
+    })
+  }),
+
+  contentWrap: ({ theme, ownerState }) => ({
+    zIndex: 2,
+    gridColumn: 'content-start/content-end'
+    // 'gridRow': 1,
+
+    // TEST TO let children blocks flow with main section grid
+    // 'display': 'contents',
+
+    // '& > *': {
+    //   gridColumn: 'unset',
+    //   gridRow: 'auto'
+    //   // ...((ownerState?.variant === SectionVariants.twoPerRow ||
+    //   //   ownerState?.variant === SectionVariants.threePerRow) && {
+    //   //   [theme.containerBreakpoints.up('md')]: {
+    //   //     gridColumn: `span var(--num-columns-md)`
+    //   //   }
+    //   // }),
+    //   // ...(ownerState?.variant === SectionVariants.threePerRow && {
+    //   //   [theme.containerBreakpoints.up('lg')]: {
+    //   //     gridColumn: `span var(--num-columns-lg)`
+    //   //   }
+    //   // })
+    // }
+  }),
+
+  introTextGrid: { gridColumn: 'content-start/content-end' },
+
+  // introText: { },
+
+  itemsGrid: ({ theme, ownerState }) => {
     return {
-      'marginTop': hasBackground ? 0 : theme.spacing(15),
-      'marginBottom': hasBackground ? 0 : theme.spacing(15),
-      'paddingTop': hasBackground ? theme.spacing(20) : 0,
-      'paddingBottom': hasBackground ? theme.spacing(20) : 0,
-      'overflow': hasBackground ? 'hidden' : 'visible',
+      // gridColumn: 'full-start/full-end',
+      display: 'grid',
+      gridGap: 'inherit',
+      gridRowGap: 0,
+      gridTemplateColumns: 'repeat(1, minmax(0, 1fr))',
 
-      '& &': {
-        marginTop: theme.spacing(10),
-        marginBottom: theme.spacing(10)
-      },
+      ...((ownerState?.variant === SectionVariants.twoPerRow ||
+        ownerState?.variant === SectionVariants.threePerRow) && {
+        [theme.containerBreakpoints.up('md')]: {
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))'
+        }
+      }),
 
-      // 'main > &': {
-      //   '&:first-of-type': {
-      //     marginTop: 0
-      //   }
-      // },
-
-      'main > &:last-of-type': {
-        marginBottom: 0
-      },
-
-      '& [class*=backgroundMedia]': {
-        height: 'auto !important',
-        width: '100% !important'
-      }
+      ...(ownerState?.variant === SectionVariants.threePerRow && {
+        [theme.containerBreakpoints.up('lg')]: {
+          gridTemplateColumns: 'repeat(3, minmax(0, 1fr))'
+        }
+      })
     };
   },
 
-  introText: ({ theme, align }) => ({
-    'gridColumn': '1 / span 2',
-    'position': 'relative',
-
-    'marginBottom': theme.spacing(4),
-
-    '[class$=Text-title]': {
-      ...theme.typography.h4,
-      textAlign: `${align === 'center' ? 'center' : 'left'}`
-    },
-
-    '[class$=Text-subtitle]': {
-      ...theme.typography.h3,
-      textAlign: `${align === 'center' ? 'center' : 'left'}`,
-      marginTop: theme.spacing(2)
-    },
-
-    '[class$=Text-root]': {
-      marginTop: theme.spacing(3),
-      textAlign: `${align === 'center' ? 'center' : 'left'}`
-    },
-
-    [theme.breakpoints.up('md')]: {
-      'gridColumn': '1 / span 5',
-
-      ...(align === 'center' && {
-        gridColumn: '1 / -1'
-      }),
-
-      '[class$=Text-title]': {
-        ...theme.typography.h3
-      },
-
-      '[class$=Text-root] > *': {
-        ...theme.typography.body2
-      },
-
-      '&::before': {
-        width: 115
-      }
-    },
-
-    [theme.breakpoints.up('md')]: {
-      'gridColumn': '1 / span 8',
-
-      ...(align === 'center' && {
-        gridColumn: '3 / span 8'
-      }),
-
-      '[class$=Text-title]': {
-        ...theme.typography.h2
-      }
-    },
-
-    '& + [class*=contentContainer]': {
-      marginTop: theme.spacing(4)
-    }
-  })
-  //
-  // Use the ownerState to set dynamic styles
-  // root: ({ ownerState, theme }) => {
-  //   return {
-  //     backgroundColor: ownerState.variant === 'example' ? 'red' : theme.palette.background.paper
-  //   };
-  // }
+  sectionItem: ({ theme, ownerState }) => ({})
 };
 
-// https://mui.com/customization/theme-components/#adding-new-component-variants
-const createVariants = (_theme: Theme): ComponentsVariants['Section'] => [
-  // Use prop matching to set variant styles
-  // {
-  //   props: {
-  //     variant: 'example'
-  //   },
-  //   style: {
-  //     backgroundColor: theme.palette.primary.main
-  //   }
-  // }
-  // Other props are also valid
-  // {
-  //   props: {
-  //     backgroundColor: 'primary.main',
-  //   },
-  //   style: {
-  //     color: theme.palette.primary.contrastText
-  //   }
-  // }
-];
+const createVariants = (theme: Theme): ComponentsVariants['Section'] => [];
 
-export default (theme: Theme): ThemeOptions => ({
+export const sectionTheme = (theme: Theme): ThemeOptions => ({
   components: {
     Section: {
       defaultProps,
@@ -133,3 +112,5 @@ export default (theme: Theme): ThemeOptions => ({
     }
   }
 });
+
+export default sectionTheme;

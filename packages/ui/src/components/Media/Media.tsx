@@ -1,36 +1,142 @@
+import React from 'react';
+import { useAmp } from 'next/amp';
+
 import { styled } from '@mui/material/styles';
-import LRMedia from '@last-rev/component-library/dist/components/Media';
-export type { MediaProps, MediaClassKey, MediaClasses } from '@last-rev/component-library/dist/components/Media';
 
-import { MediaProps } from './Media.types';
-import Link from '../Link';
-import Box from '@mui/material/Box';
+import sidekick from '@last-rev/contentful-sidekick-util';
 
-const Media = ({ link, ...props }: MediaProps) => {
-  if (link)
+import ErrorBoundary from '../ErrorBoundary';
+import Image from '../Image';
+import ArtDirectedImage from '../ArtDirectedImage';
+
+import type { MediaProps, MediaVideoProps } from './Media.types';
+
+// import dynamic from 'next/dynamic';
+
+// const Image = dynamic(() => import('../Image'));
+// const ArtDirectedImage = dynamic(() => import('../ArtDirectedImage'));
+
+const Media = (props: MediaProps & MediaVideoProps) => {
+  const isAmp = useAmp();
+
+  const { variant, file, title, fileMobile, fileTablet, testId, sidekickLookup, ...other } = props;
+  // TODO: Add support for video
+  const image = file;
+  const alt = title || '';
+
+  if (variant === 'embed' && isAmp) {
     return (
-      <Root __typename={'Link'} {...link}>
-        <MediaWrap variant={props.variant} alt={''}>
-          <LRMedia {...props} />
-        </MediaWrap>
-      </Root>
+      <ErrorBoundary>
+        {/* @ts-expect-error */}
+        <amp-iframe
+          {...sidekick(sidekickLookup)}
+          src={image?.url}
+          data-testid={testId || 'Media'}
+          width={image?.width ?? 800}
+          height={image?.height ?? 400}
+          layout="responsive"
+          sandbox="allow-scripts allow-same-origin"
+        />
+      </ErrorBoundary>
     );
+  }
+  if (variant === 'embed') {
+    return (
+      <ErrorBoundary>
+        <EmbedRoot
+          {...sidekick(sidekickLookup)}
+          {...(props as React.IframeHTMLAttributes<any>)}
+          src={image?.url}
+          sx={{ width: '100%', height: '100%', ...props.sx }}
+          data-testid={testId || 'Media'}
+        />
+      </ErrorBoundary>
+    );
+  }
+
+  if (variant === 'video') {
+    return (
+      <ErrorBoundary>
+        <VideoRoot
+          {...sidekick(sidekickLookup)}
+          preload="auto"
+          data-testid={testId || 'Media'}
+          {...(props as MediaVideoProps)}
+          sx={{ width: '100%', height: '100%', ...props.sx }}
+        >
+          <source src={file?.url} />
+          Your browser does not support the video tag.
+        </VideoRoot>
+      </ErrorBoundary>
+    );
+  }
+  if (fileTablet || fileMobile) {
+    return (
+      <ErrorBoundary>
+        <ArtDirectedRoot
+          {...sidekick(sidekickLookup)}
+          {...other}
+          title={title}
+          file={file}
+          fileTablet={fileTablet}
+          fileMobile={fileMobile}
+          testId={testId || 'Media'}
+        />
+      </ErrorBoundary>
+    );
+  }
   return (
-    <MediaWrap variant={props.variant} alt={''}>
-      <LRMedia {...props} />
-    </MediaWrap>
+    <ErrorBoundary>
+      <Root
+        {...sidekick(sidekickLookup)}
+        {...image}
+        {...other}
+        src={image?.url}
+        alt={alt}
+        testId={testId || 'Media'}
+      />
+    </ErrorBoundary>
   );
 };
 
-const Root = styled(Link, {
+// Define the pieces of the Media customizable through Theme
+
+const shouldForwardProp = (prop: string) =>
+  prop !== 'variant' &&
+  prop !== 'fileName' &&
+  prop !== 'testId' &&
+  prop !== 'priority' &&
+  prop !== 'sidekickLookup' &&
+  prop !== 'sx' &&
+  prop !== 'file' &&
+  prop !== 'nextImageOptimization';
+
+const Root = styled(Image, {
+  name: 'Media',
+  slot: 'Root',
+  shouldForwardProp: (prop: string) =>
+    prop !== 'variant' && prop !== 'fileName' && prop !== 'sidekickLookup',
+  overridesResolver: (_, styles) => [styles.root]
+})<{ variant?: string }>``;
+
+const ArtDirectedRoot = styled(ArtDirectedImage, {
   name: 'Media',
   slot: 'Root',
   overridesResolver: (_, styles) => [styles.root]
-})(() => ({}));
+})<{ variant?: string }>``;
 
-const MediaWrap = styled(Box, {
+const EmbedRoot = styled('iframe', {
   name: 'Media',
-  slot: 'MediaWrap',
-  overridesResolver: (_, styles) => [styles.mediaWrap]
-})<MediaProps>(() => ({}));
+  slot: 'EmbedRoot',
+  shouldForwardProp,
+  overridesResolver: (_, styles) => [styles.root]
+})``;
+
+const VideoRoot = styled('video', {
+  name: 'Media',
+  slot: 'VideoRoot',
+  shouldForwardProp,
+  overridesResolver: (_, styles) => [styles.root]
+})<{ variant?: string }>``;
+
 export default Media;

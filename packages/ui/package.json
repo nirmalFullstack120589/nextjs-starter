@@ -6,7 +6,7 @@
     "./button": "./src/button.tsx",
     "./card": "./src/card.tsx",
     "./code": "./src/code.tsx",
-    "./contentMapping":"./src/contentMapping.ts",
+    "./contentMapping": "./src/contentMapping.ts",
     "./util": "./src/index.ts"
   },
   "scripts": {
@@ -26,10 +26,19 @@
     "react": "^18.2.0",
     "typescript": "5.3.3"
   },
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
     "@last-rev/component-library": "^0.5.18",
     "@last-rev/contentful-sidekick-util": "^0.2.0",
+    "@mui/lab": "^5.0.0-alpha.170",
     "@mui/material": "^5.15.15",
-    "@mui/system": "^5.15.15"
+    "@mui/system": "^5.15.15",
+    "styled-components": "6",
+    "swiper": "10.3.1"
   }
 }

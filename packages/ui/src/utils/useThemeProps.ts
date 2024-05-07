@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/system';
-import { ThemedProps, ThemeWithProps } from '@mui/system/useThemeProps';
+import type { ThemedProps, ThemeWithProps } from '@mui/system/useThemeProps';
 
 type UseThemeProps = <Theme extends ThemeWithProps, Props, Name extends keyof any>(params: {
   props: Props;
@@ -7,10 +7,15 @@ type UseThemeProps = <Theme extends ThemeWithProps, Props, Name extends keyof an
   defaultTheme?: Theme;
 }) => Props & ThemedProps<Theme, Name>;
 
-export const useThemeProps: UseThemeProps = ({ name,props, defaultTheme }) => {
+export const useThemeProps: UseThemeProps = ({ name, props, defaultTheme }) => {
   const theme = useTheme(defaultTheme);
 
-  if (!theme || !theme.components || !theme.components[name] || !theme.components[name].defaultProps) {
+  if (
+    !theme ||
+    !theme.components ||
+    !theme.components[name] ||
+    !theme.components[name].defaultProps
+  ) {
     return props;
   }
   const mergedProps = resolveProps(theme.components[name].defaultProps, props);
@@ -26,5 +31,3 @@ const resolveProps = (defaultProps: any, props: any) => {
   });
   return output;
 };
-
-export default useThemeProps;

@@ -1,88 +1,116 @@
 import React from 'react';
-import { Container, Box } from '@mui/material';
-import styled from '@mui/system/styled';
+
+import { styled } from '@mui/material/styles';
+
+import Box from '@mui/material/Box';
+
 import sidekick from '@last-rev/contentful-sidekick-util';
 
-import { CollectionProps } from './Collection.types';
+import Grid from '../Grid';
 import ErrorBoundary from '../ErrorBoundary';
 import ContentModule from '../ContentModule';
 
-export const Collection = ({
-  items,
-  itemsWidth,
-  variant,
-  itemsVariant,
-  sidekickLookup,
-  introText,
-  ...props
-}: CollectionProps) => {
+import type { CollectionProps, CollectionOwnerState } from './Collection.types';
+import Background from '../Background';
+
+const Collection = (props: CollectionProps) => {
+  const ownerState = { ...props };
+
+  const {
+    backgroundImage,
+    backgroundColor,
+    items,
+    variant,
+    itemsVariant,
+    sidekickLookup,
+    introText
+  } = props;
+
   return (
     <ErrorBoundary>
       <Root
-        variant={variant}
-        itemsVariant={itemsVariant}
+        ownerState={ownerState}
+        {...sidekick(sidekickLookup)}
         data-testid={`Collection-${variant}`}
-        {...props}
-        {...sidekick(sidekickLookup)}>
+      >
+        <CollectionBackground
+          background={backgroundImage}
+          backgroundColor={backgroundColor}
+          testId="Collection-background"
+        />
+
         {introText && (
-          <Container>
-            <IntroText {...introText} {...sidekick(sidekickLookup, 'introText')} data-testid="Collection-introText" />
-          </Container>
+          <IntroTextGrid ownerState={ownerState}>
+            <IntroText
+              ownerState={ownerState}
+              {...sidekick(sidekickLookup, 'introText')}
+              {...introText}
+              variant="introText"
+            />
+          </IntroTextGrid>
         )}
-        <ContentContainer>
+
+        <ContentGrid ownerState={ownerState}>
           {!!items?.length && (
-            <ItemsContainer id="items">
+            <ItemsGrid ownerState={ownerState} id="items">
               {items?.map((item, index) => (
                 <Item
-                  // @ts-ignore: TODO: ID not recognized
+                  ownerState={ownerState}
+                  backgroundColor={backgroundColor}
                   key={item?.id}
                   {...item}
-                  // @ts-ignore: TODO: Variant does not exist on Section
                   variant={itemsVariant ?? item?.variant}
                   position={index + 1}
                 />
               ))}
-            </ItemsContainer>
+            </ItemsGrid>
           )}
-        </ContentContainer>
+        </ContentGrid>
       </Root>
     </ErrorBoundary>
   );
 };
 
-const shouldForwardProp = (prop: string) => prop !== 'variant' && prop !== 'itemsVariant';
-
 const Root = styled(Box, {
   name: 'Collection',
   slot: 'Root',
-  shouldForwardProp,
-  overridesResolver: (_, styles) => [styles.root]
-})<{ variant?: string; itemsVariant?: string }>``;
+  overridesResolver: ({ ownerState }, styles) => [styles.root, styles[`${ownerState?.variant}`]]
+})<{ ownerState: CollectionOwnerState }>``;
 
-const ContentContainer = styled(Container, {
+const CollectionBackground = styled(Background, {
   name: 'Collection',
-  slot: 'ContentContainer',
-  shouldForwardProp,
-  overridesResolver: (_, styles) => [styles.contentContainer]
-})<{ variant?: string }>``;
+  slot: 'Background',
+  overridesResolver: (_, styles) => [styles.background]
+})<{}>``;
+
+const ContentGrid = styled(Grid, {
+  name: 'Collection',
+  slot: 'ContentGrid',
+  overridesResolver: (_, styles) => [styles.contentGrid]
+})<{ ownerState: CollectionOwnerState }>``;
+
+const IntroTextGrid = styled(Grid, {
+  name: 'Collection',
+  slot: 'IntroTextGrid',
+  overridesResolver: (_, styles) => [styles.introTextGrid]
+})<{ ownerState: CollectionOwnerState }>``;
 
 const IntroText = styled(ContentModule, {
   name: 'Collection',
   slot: 'IntroText',
   overridesResolver: (_, styles) => [styles.introText]
-})<{ variant?: string }>``;
+})<{ ownerState: CollectionOwnerState }>``;
 
-const ItemsContainer = styled(Box, {
+const ItemsGrid = styled(Box, {
   name: 'Collection',
-  slot: 'ItemsContainer',
-  shouldForwardProp,
-  overridesResolver: (_, styles) => [styles.itemsContainer]
-})<{ variant?: string }>``;
+  slot: 'ItemsGrid',
+  overridesResolver: (_, styles) => [styles.itemsGrid, styles.itemsContainerOnePerRow]
+})<{ ownerState: CollectionOwnerState }>``;
 
 const Item = styled(ContentModule, {
   name: 'Collection',
   slot: 'Item',
   overridesResolver: (_, styles) => [styles.item]
-})<{ variant?: string }>``;
+})<{ ownerState: CollectionOwnerState }>``;
 
 export default Collection;

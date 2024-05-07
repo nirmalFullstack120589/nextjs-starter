@@ -2,24 +2,20 @@ fragment Hero_BaseFragment on Hero {
   ...Content_BaseFragment
   variant
   internalTitle
+  overline
   title
   subtitle
   backgroundColor
-  contentWidth
-  contentHeight
   background {
     ...Media_BaseFragment
   }
   body {
     ...RichText_BaseFragment
   }
-  images: image {
+  images: sideImageItems {
     ...Media_BaseFragment
   }
   actions {
     ...Link_BaseFragment
-  }
-  theme {
-    components
   }
 }

@@ -1,183 +1,221 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import Box, { BoxProps } from '@mui/material/Box';
-import Typography, { TypographyProps } from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
+
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import sidekick from '@last-rev/contentful-sidekick-util';
 
 import ContentModule from '../ContentModule';
+import Grid from '../Grid';
+import Background from '../Background';
+import ErrorBoundary from '../ErrorBoundary';
 
-import { BlockProps } from './Block.types';
-import Link, { LinkProps } from '../Link';
+import type { BlockProps, BlockOwnerState } from './Block.types';
 
-import useThemeProps from '../../utils/useThemeProps';
-import Container from '@mui/material/Container';
+const Block = (props: BlockProps) => {
+  const ownerState = { ...props };
 
-const Block = (inProps: BlockProps) => {
-  const props = useThemeProps({
-    name: 'Block',
-    props: inProps
-  });
-  const { variant, introText, eyebrow, title, subtitle, body, mediaItems, actions, link, sidekickLookup } = props;
-
-  const extraProps = link
-    ? {
-        component: Link,
-        href: link.href
-      }
-    : {};
+  const {
+    backgroundImage,
+    backgroundColor,
+    introText,
+    overline,
+    title,
+    subtitle,
+    body,
+    supplementalContent,
+    mediaItems,
+    actions,
+    sidekickLookup
+  } = props;
 
   return (
-    <Root data-testid="Block" {...sidekick(sidekickLookup)} {...props} variant={variant}>
-      {!!introText && (
-        <IntroTextWrapper>
-          <IntroText {...sidekick(sidekickLookup, 'introText')} {...introText} />
-        </IntroTextWrapper>
-      )}
+    <ErrorBoundary>
+      <Root data-testid="Block" {...sidekick(sidekickLookup)} ownerState={ownerState}>
+        <BlockBackground
+          background={backgroundImage}
+          backgroundColor={backgroundColor}
+          testId="Block-background"
+        />
 
-      <ContentOuterWrapper styleVariant={variant}>
-        <ContentWrapper>
-          <Content>
-            {!!eyebrow && <Eyebrow label={eyebrow} />}
-
-            {!!title && (
-              <Title {...sidekick(sidekickLookup, 'title')} data-testid="Block-title" component="h2">
-                {title}
-              </Title>
-            )}
-
-            {!!subtitle && (
-              <Subtitle {...sidekick(sidekickLookup, 'subtitle')} data-testid="Block-subtitle">
-                {subtitle}
-              </Subtitle>
-            )}
-
-            {!!body && <Body {...sidekick(sidekickLookup, 'body')} __typename="Text" body={body} />}
-          </Content>
-
-          {!!actions?.length && (
-            <ActionsWrapper {...sidekick(sidekickLookup, 'actions')} data-testid="Block-actions">
-              {actions.map((action) => (
-                <Action key={action?.id} {...(action as LinkProps)} />
-              ))}
-            </ActionsWrapper>
-          )}
-        </ContentWrapper>
-
-        {!!mediaItems && (
-          <MediaWrapper {...extraProps} variant={variant}>
-            {mediaItems.map((media) => (
-              <Media key={media?.id} {...sidekick(sidekickLookup, 'mediaItems')} {...media} />
-            ))}
-          </MediaWrapper>
+        {!!introText && (
+          <IntroTextGrid ownerState={ownerState}>
+            <IntroText
+              ownerState={ownerState}
+              {...sidekick(sidekickLookup, 'introText')}
+              {...introText}
+              variant="introText"
+            />
+          </IntroTextGrid>
         )}
-      </ContentOuterWrapper>
-    </Root>
+
+        <ContentOuterGrid ownerState={ownerState}>
+          {overline || title || subtitle || body || actions ? (
+            <MainContentWrap ownerState={ownerState}>
+              <Content ownerState={ownerState}>
+                {!!overline && (
+                  <Overline ownerState={ownerState} variant="overline">
+                    {overline}
+                  </Overline>
+                )}
+
+                {!!title && (
+                  <Title
+                    ownerState={ownerState}
+                    {...sidekick(sidekickLookup, 'title')}
+                    data-testid="Block-title"
+                    variant="h1"
+                    dangerouslySetInnerHTML={{ __html: title }}
+                  />
+                )}
+
+                {!!subtitle && (
+                  <Subtitle
+                    ownerState={ownerState}
+                    {...sidekick(sidekickLookup, 'subtitle')}
+                    data-testid="Block-subtitle"
+                    variant="display5"
+                  >
+                    {subtitle}
+                  </Subtitle>
+                )}
+
+                {!!body && (
+                  <Body
+                    ownerState={ownerState}
+                    {...sidekick(sidekickLookup, 'body')}
+                    __typename="RichText"
+                    body={body}
+                  />
+                )}
+              </Content>
+
+              {!!actions?.length && (
+                <ActionsWrap
+                  ownerState={ownerState}
+                  {...sidekick(sidekickLookup, 'actions')}
+                  data-testid="Block-actions"
+                >
+                  {actions.map((action) => (
+                    <Action ownerState={ownerState} key={action?.id} {...action} />
+                  ))}
+                </ActionsWrap>
+              )}
+            </MainContentWrap>
+          ) : null}
+
+          {(!!mediaItems?.length || supplementalContent) && (
+            <SideContentWrap ownerState={ownerState}>
+              {!!mediaItems?.length ? (
+                mediaItems.map((media) => (
+                  <Media
+                    ownerState={ownerState}
+                    key={media?.id}
+                    {...sidekick(sidekickLookup, 'mediaItems')}
+                    {...media}
+                  />
+                ))
+              ) : (
+                <ContentModule {...supplementalContent} />
+              )}
+            </SideContentWrap>
+          )}
+        </ContentOuterGrid>
+      </Root>
+    </ErrorBoundary>
   );
 };
-
-const shouldForwardProp = (prop: string) =>
-  prop !== 'variant' &&
-  prop !== 'sidekickLookup' &&
-  prop !== 'body' &&
-  prop !== 'subtitle' &&
-  prop !== 'actions' &&
-  prop !== 'media' &&
-  prop !== 'introText' &&
-  prop !== 'eyebrow' &&
-  prop !== 'ownerState' &&
-  prop !== 'title' &&
-  prop !== 'blockVariant';
 
 const Root = styled(Box, {
   name: 'Block',
   slot: 'Root',
-  shouldForwardProp: (prop) => shouldForwardProp(prop as string) && prop !== 'id',
   overridesResolver: (_, styles) => [styles.root]
-})<{ variant?: string; colorScheme?: string }>(() => ({}));
+})<{ ownerState: BlockOwnerState }>``;
 
-const ContentOuterWrapper = styled(Container, {
+const BlockBackground = styled(Background, {
   name: 'Block',
-  slot: 'ContentOuterWrapper',
-  shouldForwardProp,
-  overridesResolver: (_, styles) => [styles.contentOuterWrapper]
-})<{ styleVariant?: string }>(() => ({}));
+  slot: 'Background',
+  overridesResolver: (_, styles) => [styles.background]
+})<{}>``;
 
-const IntroTextWrapper = styled(Box, {
+const ContentOuterGrid = styled(Grid, {
   name: 'Block',
-  slot: 'IntroTextWrapper',
-  shouldForwardProp,
-  overridesResolver: (_, styles) => [styles.introTextWrapper]
-})(() => ({}));
+  slot: 'ContentOuterGrid',
+  overridesResolver: (_, styles) => [styles.contentOuterGrid]
+})<{ ownerState: BlockOwnerState }>``;
+
+const IntroTextGrid = styled(Grid, {
+  name: 'Block',
+  slot: 'IntroTextGrid',
+  overridesResolver: (_, styles) => [styles.introTextGrid]
+})<{ ownerState: BlockOwnerState }>``;
 
 const IntroText = styled(ContentModule, {
   name: 'Block',
   slot: 'IntroText',
   overridesResolver: (_, styles) => [styles.introText]
-})(() => ({}));
+})<{ ownerState: BlockOwnerState }>``;
 
-const ContentWrapper = styled(Box, {
+const MainContentWrap = styled('div', {
   name: 'Block',
-  slot: 'ContentWrapper',
-  shouldForwardProp,
-  overridesResolver: (_, styles) => [styles.contentWrapper]
-})<BoxProps<React.ElementType>>(() => ({}));
+  slot: 'MainContentWrap',
+  overridesResolver: (_, styles) => [styles.mainContentWrap]
+})<{ ownerState: BlockOwnerState }>``;
 
 const Content = styled(Box, {
   name: 'Block',
   slot: 'Content',
-  shouldForwardProp,
   overridesResolver: (_, styles) => [styles.content]
-})<BoxProps<React.ElementType>>(() => ({}));
+})<{ ownerState: BlockOwnerState }>``;
 
-const Eyebrow = styled(Chip, {
+const Overline = styled(Typography, {
   name: 'Block',
-  slot: 'Eyebrow',
-  overridesResolver: (_, styles) => [styles.eyebrow]
-})(() => ({}));
+  slot: 'Overline',
+  overridesResolver: (_, styles) => [styles.overline]
+})<{ ownerState: BlockOwnerState }>``;
 
 const Title = styled(Typography, {
   name: 'Block',
   slot: 'Title',
   overridesResolver: (_, styles) => [styles.title]
-})<TypographyProps<React.ElementType>>(() => ({}));
+})<{ ownerState: BlockOwnerState }>``;
 
 const Subtitle = styled(Typography, {
   name: 'Block',
   slot: 'Subtitle',
   overridesResolver: (_, styles) => [styles.subtitle]
-})<TypographyProps<React.ElementType>>(() => ({}));
+})<{ ownerState: BlockOwnerState }>``;
 
 const Body = styled(ContentModule, {
   name: 'Block',
   slot: 'Body',
   overridesResolver: (_, styles) => [styles.body]
-})(() => ({}));
+})<{ ownerState: BlockOwnerState }>``;
 
-const MediaWrapper = styled(Box, {
+const SideContentWrap = styled('div', {
   name: 'Block',
-  slot: 'MediaWrapper',
-  shouldForwardProp,
-  overridesResolver: (_, styles) => [styles.mediaWrapper]
-})<BoxProps<React.ElementType>>(() => ({}));
+  slot: 'SideContentWrap',
+
+  overridesResolver: (_, styles) => [styles.sideContentWrap]
+})<{ ownerState: BlockOwnerState }>``;
 
 const Media = styled(ContentModule, {
   name: 'Block',
   slot: 'Media',
   overridesResolver: (_, styles) => [styles.media]
-})(() => ({}));
+})<{ ownerState: BlockOwnerState }>``;
 
-const ActionsWrapper = styled(Box, {
+const ActionsWrap = styled(Box, {
   name: 'Block',
-  slot: 'ActionsWrapper',
-  shouldForwardProp,
-  overridesResolver: (_, styles) => [styles.actionsWrapper]
-})<BoxProps<React.ElementType>>(() => ({}));
+  slot: 'ActionsWrap',
+
+  overridesResolver: (_, styles) => [styles.actionsWrap]
+})<{ ownerState: BlockOwnerState }>``;
 
 const Action = styled(ContentModule, {
   name: 'Block',
   slot: 'Action',
   overridesResolver: (_, styles) => [styles.action]
-})(() => ({}));
+})<{ ownerState: BlockOwnerState }>``;
 
 export default Block;

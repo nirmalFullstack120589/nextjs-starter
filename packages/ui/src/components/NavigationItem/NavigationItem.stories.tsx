@@ -4,7 +4,7 @@ import NavigationItem from './NavigationItem';
 import mockContent from './NavigationItem.mock';
 
 export default {
-  title: '1. LR Components / NavigationItem',
+  title: 'Navigation/NavigationItem',
   component: NavigationItem,
   decorators: [
     (storyFn: () => boolean | React.ReactChild | React.ReactFragment | React.ReactPortal) => (
@@ -16,7 +16,7 @@ export default {
       name: 'Variant',
       control: {
         type: 'select',
-        options: ['NavigationItem', 'button-contained', 'button-outlined', 'button-text']
+        options: ['NavigationItem', 'buttonContained', 'buttonOutlined', 'button-text']
       },
       table: {
         defaultValue: { summary: 'NavigationItem' }
@@ -39,6 +39,8 @@ export default {
   }
 };
 
-const Template = (args: JSX.IntrinsicAttributes) => <NavigationItem __typename="NavigationItem" {...args} />;
+const Template = (args: JSX.IntrinsicAttributes) => (
+  <NavigationItem __typename="NavigationItem" {...args} />
+);
 export const Default = Template.bind({});
 Default.args = { ...mockContent() };

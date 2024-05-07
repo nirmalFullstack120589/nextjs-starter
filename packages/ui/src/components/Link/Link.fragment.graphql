@@ -1,24 +1,25 @@
-fragment Link_BaseFieldsFragment on Link {
-  text
-  variant
-  href
-  icon
-  iconPosition
-  target
-}
-
 fragment Link_BaseFragment on Link {
   ...Content_BaseFragment
-  ...Link_BaseFieldsFragment
+  text
+  href
+  variant
+  icon
+  iconPosition
+  color
 }
 
 fragment Link_CardFragment on Link {
   ...Content_BaseFragment
-  ...Link_BaseFieldsFragment
+  text
+  href
+  variant
+  icon
+  iconPosition
+  color
 }
 
 fragment Link_NavItemFragment on Link {
   id
   __typename
-  ...Link_BaseFieldsFragment
+  ...Link_BaseFragment
 }

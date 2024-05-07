@@ -1,13 +1,37 @@
-import React from 'react';
-import Box from '@mui/material/Box';
 import Header from './Header';
-import headerMock from './Header.mock';
+
+import { headerBaseMock, headerChildrenMock, headerChildrenNestedMock } from './Header.mock';
 
 export default {
-  title: '1. LR Components / Header',
-  component: Header
+  title: 'Global/Header',
+  component: Header,
+  tags: ['autodocs'],
+  argTypes: {
+    // TODO: Update
+    variant: {
+      control: {
+        type: 'select',
+        options: ['default']
+      }
+    }
+  }
 };
 
-const Template = (args: JSX.IntrinsicAttributes) => <Header sidekickLookup={{}} {...args} />;
-export const Default = Template.bind({});
-Default.args = { ...headerMock() };
+// More on writing stories with args: https://storybook.js.org/docs/react/writing-stories/args
+export const Default = {
+  args: {
+    ...headerBaseMock()
+  }
+};
+
+export const Dropdown = {
+  args: {
+    ...headerChildrenMock()
+  }
+};
+
+export const MegaNav = {
+  args: {
+    ...headerChildrenNestedMock()
+  }
+};

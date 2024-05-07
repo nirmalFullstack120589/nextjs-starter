@@ -1,12 +1,19 @@
-import { lorem } from 'faker';
-import { ImageProps } from './Image.types';
+import type { ImageProps } from './Image.types';
 
-export default (): ImageProps => ({
-  src: 'https://images.ctfassets.net/imglmb3xms7o/6nmKqleRuQCjYEl6YdyqJB/083bb61de3f0aac739f5c01073fafa63/cmp.png?h=250',
-  alt: lorem.words(3),
+// TODO: Use Media Mock
+const imageDefaultMock: ImageProps = {
+  src: 'https://source.unsplash.com/random/300×300',
+  alt: 'This is the image alt text',
   width: 180,
   height: 180,
-  className: lorem.word(),
+  className: 'image-class-name',
   testId: 'Image'
   // lazy: false
+};
+
+export const imageBaseMock = ({ ...override } = {}) => ({
+  ...imageDefaultMock,
+  ...override
 });
+
+export default imageBaseMock;

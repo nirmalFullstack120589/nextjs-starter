@@ -9,18 +9,18 @@ fragment Header_BaseFragment on Header {
   navigationItems {
     ...NavigationItem_BaseFragment
   }
-  colorScheme
-  ctAs {
-    ...Link_BaseFragment
-  }
-  mobileCtAs {
+  ctaItems {
     ...Link_BaseFragment
   }
   supernavIcon {
     ...Media_BaseFragment
   }
-  supernavText
+  supernavText {
+    ...RichText_BaseFragment
+  }
+  supernavMobileText
   supernavLink {
     ...Link_BaseFragment
   }
+  backgroundColor
 }

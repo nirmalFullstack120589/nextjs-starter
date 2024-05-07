@@ -23,30 +23,15 @@ fragment Section_BaseFragment on Section {
 
 fragment Section_BaseFieldsFragment on Section {
   ...Content_BaseFragment
-  theme {
-    id
-    components
-    typography
-  }
   variant
-  styles
-  # Style fields
   backgroundColor
-  contentWidth
-  contentDirection
-  contentSpacing
-  theme {
-    id
-    components
-    typography
-  }
   background {
     ...Media_BaseFragment
   }
   introText {
     ...Text_IntroTextFragment
   }
-  hasBackground
+  #hasBackground
 }
 
 # This will go 3 levels deep recursive

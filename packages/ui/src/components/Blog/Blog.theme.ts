@@ -1,106 +1,219 @@
-import { Theme, ThemeOptions, ComponentsOverrides, ComponentsVariants } from '@mui/material/styles';
+import type {
+  ThemeOptions,
+  ComponentsProps,
+  ComponentsOverrides,
+  ComponentsVariants
+} from '@mui/material/styles';
+import { Theme } from '@ui/ThemeRegistry/theme.types';
 
-// https://mui.com/customization/theme-components/#default-props
-export const defaultProps = {};
+const defaultProps: ComponentsProps['Blog'] = {};
 
-// https://mui.com/customization/theme-components/#global-style-overrides
-export const styleOverrides: ComponentsOverrides<Theme>['Blog'] = {
-  root: ({}) => ({}),
+const styleOverrides: ComponentsOverrides<Theme>['Blog'] = {
+  // root: {},
 
-  featuredMedia: () => ({}),
+  contentOuterGrid: {
+    'containerType': 'inline-size',
+    '> *': {
+      gridColumn: 'full-start / full-end'
+    }
+  },
+
+  headerWrap: ({ theme }) => ({
+    gridColumnStart: 'content-start',
+    gridColumnEnd: 'content-end',
+
+    [theme.breakpoints.up('lg')]: {
+      gridColumnStart: 'three-start',
+      gridColumnEnd: 'ten-end'
+    }
+  }),
+
+  breadcrumbsWrap: {
+    gridColumnStart: 'content-start',
+    gridColumnEnd: 'content-end'
+  },
+
+  contentWrap: {
+    display: 'contents'
+  },
 
   featuredMediaWrap: ({ theme }) => ({
-    gridColumn: '1 / span 2',
-    gridRow: '2',
-    width: '100%',
-    margin: theme.spacing(0, 0, 4),
-    [theme.breakpoints.up('md')]: {
-      gridRow: '4',
-      gridColumn: '1 / span 6'
-    },
+    gridColumnStart: 'content-start',
+    gridColumnEnd: 'content-end',
+
     [theme.breakpoints.up('lg')]: {
-      gridColumn: '1 / span 8'
+      gridColumnStart: 'three-start',
+      gridColumnEnd: 'ten-end'
     }
   }),
 
-  pubDate: ({}) => ({}),
+  // featuredMedia: {},
 
-  summary: ({}) => ({}),
+  // pubDate: {},
 
-  author: ({}) => ({}),
-
-  title: ({ theme }) => ({
-    ...theme.typography.h5,
+  shareLinksWrap: ({ theme }) => ({
+    gridColumnStart: 'content-start',
+    gridColumnEnd: 'content-end',
 
     [theme.breakpoints.up('md')]: {
-      ...theme.typography.h3
+      gridColumnStart: 'two-start',
+      gridColumnEnd: 'seven-end'
     },
 
     [theme.breakpoints.up('lg')]: {
-      ...theme.typography.h2
+      gridColumnStart: 'content-quarter',
+      gridColumnEnd: 'content-three-quarter'
     }
   }),
+
+  shareLinks: ({ theme }) => ({
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 'var(--grid-gap)'
+  }),
+
+  shareLink: ({ theme }) => ({
+    'gap': 'var(--grid-gap)',
+
+    '& svg': {
+      width: 'var(--grid-gap)',
+      height: 'var(--grid-gap)'
+    },
+
+    '& .MuiTypography-root': {
+      display: 'none'
+    },
+
+    [theme.containerBreakpoints.up('lg')]: {
+      'gap': 'var(--grid-gap)',
+      '& .MuiTypography-root': {
+        ...theme.typography.bodySmall,
+        display: 'block'
+      }
+    }
+  }),
+
+  authorImageWrap: ({ theme }) => ({
+    gridRow: 1,
+    gridColumnStart: 'content-start',
+    gridColumnEnd: 'content-quarter',
+
+    [theme.breakpoints.up('md')]: {
+      gridRow: '1/ span 3',
+      gridColumnStart: 'two-start',
+      gridColumnEnd: 'two-end'
+    },
+
+    [theme.breakpoints.up('lg')]: {
+      gridRow: '1/ span 3',
+      gridColumnStart: 'four-start',
+      gridColumnEnd: 'four-end'
+    }
+  }),
+
+  authorName: ({ theme }) => ({
+    gridRow: 1,
+    alignSelf: 'center',
+    marginBottom: 0,
+
+    gridColumnStart: 'content-quarter',
+    gridColumnEnd: 'content-end',
+
+    [theme.breakpoints.up('md')]: {
+      gridColumnStart: 'three-start',
+      gridColumnEnd: 'seven-end',
+      alignSelf: 'self-end'
+    },
+
+    [theme.breakpoints.up('lg')]: {
+      gridColumnStart: 'five-start',
+      gridColumnEnd: 'content-three-quarter',
+      alignSelf: 'self-end'
+    }
+  }),
+
+  authorSummaryWrap: ({ theme }) => ({
+    display: 'flex',
+    alignSelf: 'center',
+    marginBottom: 0,
+
+    gridRow: 2,
+    gridColumnStart: 'content-start',
+    gridColumnEnd: 'content-end',
+
+    [theme.breakpoints.up('md')]: {
+      gridColumnStart: 'three-start',
+      gridColumnEnd: 'seven-end'
+    },
+
+    [theme.breakpoints.up('lg')]: {
+      gridColumnStart: 'five-start',
+      gridColumnEnd: 'content-three-quarter'
+    }
+  }),
+
+  authorSocialLinks: ({ theme }) => ({
+    alignSelf: 'self-start',
+
+    gridRow: 3,
+    gridColumnStart: 'content-start',
+    gridColumnEnd: 'content-end',
+
+    [theme.breakpoints.up('md')]: {
+      gridColumnStart: 'three-start',
+      gridColumnEnd: 'seven-end'
+    },
+
+    [theme.breakpoints.up('lg')]: {
+      gridColumnStart: 'five-start',
+      gridColumnEnd: 'content-three-quarter'
+    }
+  }),
+
+  // title: {},
 
   body: ({ theme }) => ({
-    '& > [class*=Text-root] > *:not(:first-child)': {
-      '&:not(:is(ul, ol, li))': {
-        marginTop: '1em',
-        marginBottom: '1em'
+    '& > *:not(div)': {
+      gridColumnStart: 'content-start',
+      gridColumnEnd: 'content-end',
+
+      [theme.breakpoints.up('md')]: {
+        gridColumnStart: 'two-start',
+        gridColumnEnd: 'seven-end'
       },
 
-      '&:is(ul, ol)': {
-        marginTop: '-1em',
-        marginBottom: '2em'
-      },
-
-      '&:is(span)': {
-        // Image Wrappers
-        marginTop: '2em !important',
-        marginBottom: '2em !important'
-      },
-
-      '&[class*=MuiTypography-h]': {
-        marginBottom: '.5em',
-        marginTop: '1em'
-      },
-
-      '&[class*=-h1]': {
-        ...theme.typography.h3
-      },
-
-      '&[class*=-h2]': {
-        ...theme.typography.h4
-      },
-
-      '&[class*=-h3]': {
-        ...theme.typography.h5
-      },
-
-      '&[class*=-h4]': {
-        ...theme.typography.h5
+      [theme.breakpoints.up('lg')]: {
+        gridColumnStart: 'content-quarter',
+        gridColumnEnd: 'content-three-quarter'
       }
     },
 
-    '& > [class*=Text-root] > *:first-child': {
-      marginTop: '0'
+    '& > div': {
+      gridColumnStart: 'full-start',
+      gridColumnEnd: 'full-end'
     }
   }),
 
-  blogCategories: ({}) => ({}),
+  // blogCategories: ({}) => ({}),
 
-  blogCategory: ({}) => ({}),
+  // blogCategory: ({}) => ({}),
 
-  tags: ({}) => ({}),
+  // tags: ({}) => ({}),
 
-  tag: ({}) => ({}),
+  // tag: ({}) => ({}),
 
-  relatedItems: ({}) => ({})
+  relatedItemsWrap: {
+    '& > *': {
+      gridColumn: 'full-start / full-end'
+    }
+  }
+
+  // relatedItems: ({}) => ({})
 };
 
-// https://mui.com/customization/theme-components/#adding-new-component-variants
 const createVariants = (_theme: Theme): ComponentsVariants['Blog'] => [];
 
-export default (theme: Theme): ThemeOptions => ({
+export const blogTheme = (theme: Theme): ThemeOptions => ({
   components: {
     Blog: {
       defaultProps,
@@ -109,3 +222,5 @@ export default (theme: Theme): ThemeOptions => ({
     }
   }
 });
+
+export default blogTheme;

@@ -1,6 +1,5 @@
 export type {
   HeaderNavLinkNestedProps,
-  HeaderNavLinkNestedClassKey,
-  HeaderNavLinkNestedClasses
+  HeaderNavLinkNestedClassKey
 } from './HeaderNavLinkNested.types';
 export { default } from './HeaderNavLinkNested';

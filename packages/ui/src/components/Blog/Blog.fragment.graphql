@@ -1,37 +1,30 @@
 fragment Blog_BaseFragment on Blog {
   ...Content_BaseFragment
+  seo
+  jsonLd
+  path
   title
   slug
+  pubDate
+  author {
+    ...Person_Blog_Author_Fragment
+  }
   header {
     ...Header_BaseFragment
   }
   footer {
-    ...ContentModule_BaseFragment
+    ...Footer_BaseFragment
   }
   featuredMedia {
     ...Media_BaseFragment
   }
-  summary
-  pubDate
   body {
     ...RichText_BaseFragment
   }
-  author {
-    ...Person_Card_Fragment
-  }
   relatedItems {
-    ...Link_BaseFragment
+    ...Collection_BaseFragment
   }
-  breadcrumbs {
-    ...Link_BaseFragment
-  }
-  contents {
-    ...ContentModule_BaseFragment
-  }
-  seo
-  modelUsed
-  promptedBy
-  imagesGeneratedBy
+  jsonLd
 }
 
 fragment Blog_CardFragment on Blog {
@@ -41,6 +34,9 @@ fragment Blog_CardFragment on Blog {
   featuredMedia {
     ...Media_BaseFragment
   }
-  summary
+  promoImage {
+    ...Media_BaseFragment
+  }
+  promoSummary
   pubDate
 }

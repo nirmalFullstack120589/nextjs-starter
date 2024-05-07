@@ -1,10 +1,8 @@
 fragment Media_BaseFragment on Media {
-  id
-  __typename
+  ...Content_BaseFragment
   title
-  description
   variant
-  assetURL
+  alt
   file {
     url
     extension
@@ -28,8 +26,5 @@ fragment Media_BaseFragment on Media {
     width
     height
     svgContent
-  }
-  link {
-    ...Link_BaseFragment
   }
 }

@@ -1,11 +1,10 @@
-import React from 'react';
-import Box from '@mui/material/Box';
 import Image from './Image';
 import mockContent from './Image.mock';
 
 export default {
-  title: '1. LR Components / Image',
+  title: 'Elements/Image',
   component: Image,
+  tags: ['autodocs'],
   argTypes: {
     alt: { name: 'Alt' },
     src: { name: 'Src' },
@@ -28,6 +27,4 @@ export default {
   }
 };
 
-const Template = (args: JSX.IntrinsicAttributes) => <Image {...args} />;
-export const Default = Template.bind({});
-Default.args = { ...mockContent() };
+export const Default = { args: { ...mockContent() } };

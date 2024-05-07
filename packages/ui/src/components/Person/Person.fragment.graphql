@@ -1,47 +1,51 @@
 fragment Person_BaseFragment on Person {
   ...Content_BaseFragment
+  path
+  slug
   header {
     ...Header_BaseFragment
   }
   footer {
-    ...GlobalFooter_BaseFragment
+    ...Footer_BaseFragment
   }
-  slug
   name
   jobTitle
   email
-  image {
+  #education
+  #previousExperiences
+  mainImage {
     ...Media_BaseFragment
   }
-  # featuredMedia {
-  #   ...Media_BaseFragment
-  # }
   body {
     ...RichText_BaseFragment
   }
   socialLinks {
     ...Link_BaseFragment
   }
+  hero {
+    ...Hero_BaseFragment
+  }
+  breadcrumbs {
+    ...Link_BaseFragment
+  }
 }
 
 fragment Person_Card_Fragment on Person {
   ...Content_BaseFragment
-  header {
-    ...Header_BaseFragment
-  }
-  footer {
-    ...GlobalFooter_BaseFragment
-  }
   slug
   name
   jobTitle
   email
-  image {
+  mainImage {
     ...Media_BaseFragment
   }
   socialLinks {
     ...Link_BaseFragment
   }
+}
+
+fragment Person_Blog_Author_Fragment on Person {
+  ...Person_Card_Fragment
   body {
     ...RichText_BaseFragment
   }

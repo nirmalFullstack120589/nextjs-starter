@@ -4,7 +4,7 @@ declare var Osano: {
   };
 };
 
-const linkActionTypePropsMapper = (actionType?: string): Object => {
+export const linkActionTypePropsMapper = (actionType?: string): Object => {
   switch (actionType) {
     case 'openCookieConsentDialog':
       return {
@@ -14,7 +14,9 @@ const linkActionTypePropsMapper = (actionType?: string): Object => {
             Osano?.cm?.showDrawer('osano-cm-dom-info-dialog-open');
           } else {
             // send log here so we know it's not working
-            console.log('[Cookie Consent]: Osano script not loaded, check Osano script in Google Tag Manager');
+            console.log(
+              '[Cookie Consent]: Osano script not loaded, check Osano script in Google Tag Manager'
+            );
           }
         }
       };
@@ -22,5 +24,3 @@ const linkActionTypePropsMapper = (actionType?: string): Object => {
       return {};
   }
 };
-
-export default linkActionTypePropsMapper;
