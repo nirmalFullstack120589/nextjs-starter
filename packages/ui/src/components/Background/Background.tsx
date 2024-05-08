@@ -30,13 +30,11 @@ const Background = (props: BackgroundProps) => {
 const Root = styled(Grid, {
   name: 'Background',
   slot: 'Root',
-  overridesResolver: (_, styles) => [styles.root]
 })<{ ownerState: BackgroundOwnerState }>``;
 
 const BackgroundContent = styled(ContentModule, {
   name: 'Background',
   slot: 'Background',
-  overridesResolver: (_, styles) => [styles.backgroundContent]
 })<{ ownerState: BackgroundOwnerState }>``;
 
 export default Background;
