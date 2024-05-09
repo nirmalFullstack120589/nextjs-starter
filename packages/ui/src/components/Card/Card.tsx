@@ -12,7 +12,8 @@ import Box from '@mui/material/Box';
 
 import sidekick from '@last-rev/contentful-sidekick-util';
 
-import { getFirstOfArray } from '../../utils/getFirstOfArray';
+import { getFirstOfArray } from '@repo/ui/util';
+
 import ErrorBoundary from '../ErrorBoundary';
 import ContentModule from '../ContentModule';
 import type { CardProps, CardOwnerState } from './Card.types';

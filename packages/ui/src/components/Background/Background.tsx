@@ -6,7 +6,7 @@ import Grid from '../Grid';
 
 import type { BackgroundProps, BackgroundOwnerState } from './Background.types';
 
-const Background = (props: BackgroundProps) => {
+const Background = (props: BackgroundProps) => {  
   const ownerState = { ...props };
   const { background, backgroundColor } = props;
 
@@ -15,11 +15,11 @@ const Background = (props: BackgroundProps) => {
   return (
     <Root ownerState={ownerState}>
       {background ? (
-        <BackgroundContent
+        <BackgroundContent 
           {...background}
           key={background?.id}
           ownerState={ownerState}
-          fill
+          fill                                                                                                              
           testId="Hero-background"
         />
       ) : null}
